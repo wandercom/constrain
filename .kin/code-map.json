@@ -1,0 +1,2249 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "constrain",
+    "description": "Code map exported from Kindex for constrain.",
+    "languages": [
+      "Python",
+      "python"
+    ],
+    "frameworks": [],
+    "analyzedAt": "2026-05-24T14:54:07",
+    "gitCommitHash": "bc2c2a9a1c99354fee7011d0564e4d58850fdf81"
+  },
+  "nodes": [
+    {
+      "id": "code-mod-constrain-3dafb969f47c",
+      "type": "file",
+      "name": "src/constrain/backends/claude.py",
+      "filePath": "src/constrain/backends/claude.py",
+      "summary": "Language: Python | Path: src/constrain/backends/claude.py | ~11 lines ## Classes - ClaudeBackend(LocalAgentBackend)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-e99bc6f7b4bd",
+      "type": "file",
+      "name": "src/constrain/backends/codex.py",
+      "filePath": "src/constrain/backends/codex.py",
+      "summary": "Language: Python | Path: src/constrain/backends/codex.py | ~11 lines ## Classes - CodexBackend(LocalAgentBackend)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-1b799e706cec",
+      "type": "file",
+      "name": "src/constrain/backends/cursor.py",
+      "filePath": "src/constrain/backends/cursor.py",
+      "summary": "Language: Python | Path: src/constrain/backends/cursor.py | ~11 lines ## Classes - CursorBackend(LocalAgentBackend)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-85803830a0a8",
+      "type": "file",
+      "name": "src/constrain/backends/opencode.py",
+      "filePath": "src/constrain/backends/opencode.py",
+      "summary": "Language: Python | Path: src/constrain/backends/opencode.py | ~11 lines ## Classes - OpenCodeBackend(LocalAgentBackend)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-f70e78d8230e",
+      "type": "file",
+      "name": "src/constrain/backends/local_agent.py",
+      "filePath": "src/constrain/backends/local_agent.py",
+      "summary": "Language: Python | Path: src/constrain/backends/local_agent.py | ~78 lines ## Classes - LocalAgentBackend",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-sym-constrain-c48b6a4b32c1",
+      "type": "class",
+      "name": "OpenCodeBackend",
+      "filePath": "src/constrain/backends/opencode.py",
+      "summary": "class OpenCodeBackend(LocalAgentBackend) (src/constrain/backends/opencode.py:10)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-1caadeafc7f2",
+      "type": "class",
+      "name": "LocalAgentBackend",
+      "filePath": "src/constrain/backends/local_agent.py",
+      "summary": "class LocalAgentBackend (src/constrain/backends/local_agent.py:13) ## Methods - complete(self, system: str, messages: list[dict], max_tokens: int | None = None) -> str",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-972e4541ca6a",
+      "type": "class",
+      "name": "CodexBackend",
+      "filePath": "src/constrain/backends/codex.py",
+      "summary": "class CodexBackend(LocalAgentBackend) (src/constrain/backends/codex.py:10)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-56dc84a9daeb",
+      "type": "class",
+      "name": "CursorBackend",
+      "filePath": "src/constrain/backends/cursor.py",
+      "summary": "class CursorBackend(LocalAgentBackend) (src/constrain/backends/cursor.py:10)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-da9383be582b",
+      "type": "class",
+      "name": "ClaudeBackend",
+      "filePath": "src/constrain/backends/claude.py",
+      "summary": "class ClaudeBackend(LocalAgentBackend) (src/constrain/backends/claude.py:10)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-738a9649bd83",
+      "type": "class",
+      "name": "Message",
+      "filePath": "contracts/src_constrain_models/interface.py",
+      "summary": "class Message (contracts/src_constrain_models/interface.py:32)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-b0e92d2286ba",
+      "type": "class",
+      "name": "Posture",
+      "filePath": "contracts/src_constrain_models/interface.py",
+      "summary": "class Posture(Enum) (contracts/src_constrain_models/interface.py:12) [Merged from: Posture] class Posture(Enum) (contracts/src_constrain_posture/interface.py:11)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-9d1f02524493",
+      "type": "class",
+      "name": "Posture",
+      "filePath": "src/src_constrain_models/models.py",
+      "summary": "class Posture(str, enum.Enum) (src/src_constrain_models/models.py:12) [Merged from: Posture] class Posture(str, enum.Enum) (src/constrain/models.py:12)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-b4ef2f84b6ae",
+      "type": "class",
+      "name": "BackendAuthError",
+      "filePath": "src/constrain/backends/__init__.py",
+      "summary": "class BackendAuthError(BackendError) (src/constrain/backends/__init__.py:25)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-28cc274c76e9",
+      "type": "class",
+      "name": "BackendError",
+      "filePath": "src/constrain/backends/__init__.py",
+      "summary": "class BackendError(Exception) (src/constrain/backends/__init__.py:9)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-85e6145abc38",
+      "type": "class",
+      "name": "Severity",
+      "filePath": "src/src_constrain_models/models.py",
+      "summary": "class Severity(str, enum.Enum) (src/src_constrain_models/models.py:27) [Merged from: Severity] class Severity(str, enum.Enum) (src/constrain/models.py:27)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-22fb2ee4e9f3",
+      "type": "class",
+      "name": "Phase",
+      "filePath": "contracts/src_constrain_models/interface.py",
+      "summary": "class Phase(Enum) (contracts/src_constrain_models/interface.py:20) [Merged from: Phase] class Phase(Enum) (contracts/src_constrain_posture/interface.py:19)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-7be1e2de9e74",
+      "type": "class",
+      "name": "Phase",
+      "filePath": "src/src_constrain_models/models.py",
+      "summary": "class Phase(str, enum.Enum) (src/src_constrain_models/models.py:20) [Merged from: Phase] class Phase(str, enum.Enum) (src/constrain/models.py:20)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-5c85a271cf98",
+      "type": "class",
+      "name": "EngineConfig",
+      "filePath": "contracts/src_constrain_engine/interface.py",
+      "summary": "class EngineConfig (contracts/src_constrain_engine/interface.py:21)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-eae71fef95a9",
+      "type": "class",
+      "name": "EngineConfig",
+      "filePath": "src/constrain/engine.py",
+      "summary": "class EngineConfig (src/constrain/engine.py:43)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-mod-constrain-3e0b305dc5e2",
+      "type": "file",
+      "name": "src/constrain/backends/anthropic.py",
+      "filePath": "src/constrain/backends/anthropic.py",
+      "summary": "Language: Python | Path: src/constrain/backends/anthropic.py | ~31 lines ## Classes - AnthropicBackend",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-273ee2fae8a4",
+      "type": "file",
+      "name": "src/constrain/backends/__init__.py",
+      "filePath": "src/constrain/backends/__init__.py",
+      "summary": "Language: Python | Path: src/constrain/backends/__init__.py | ~85 lines ## Classes - Backend(Protocol)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 8,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-ec8108dbfcdc",
+      "type": "file",
+      "name": "src/constrain/engine.py",
+      "filePath": "src/constrain/engine.py",
+      "summary": "Language: Python | Path: src/constrain/engine.py | ~551 lines ## Classes - ConversationEngine",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 4,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-bae1919e0cc6",
+      "type": "file",
+      "name": "src/constrain/backends/openai.py",
+      "filePath": "src/constrain/backends/openai.py",
+      "summary": "Language: Python | Path: src/constrain/backends/openai.py | ~52 lines ## Classes - OpenAIBackend",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-1f46cb1db338",
+      "type": "file",
+      "name": "src/constrain/posture.py",
+      "filePath": "src/constrain/posture.py",
+      "summary": "Language: Python | Path: src/constrain/posture.py | ~366 lines ## Functions - get_prime_prompt(document_text: str, problem_model: ProblemModel) -> str",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 10,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-c4ce66827578",
+      "type": "file",
+      "name": "src/constrain/cli.py",
+      "filePath": "src/constrain/cli.py",
+      "summary": "Language: Python | Path: src/constrain/cli.py | ~784 lines ## Classes - SafeGroup(click.Group)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 22,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-23f50866c885",
+      "type": "file",
+      "name": "src/constrain/synthesizer.py",
+      "filePath": "src/constrain/synthesizer.py",
+      "summary": "Language: Python | Path: src/constrain/synthesizer.py | ~303 lines ## Classes - SynthesisArtifacts",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 6,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-sym-constrain-745c9acdbd33",
+      "type": "class",
+      "name": "SynthesisArtifacts",
+      "filePath": "src/constrain/synthesizer.py",
+      "summary": "class SynthesisArtifacts (src/constrain/synthesizer.py:13) ## Methods - __getitem__(self, index)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 3,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-mod-constrain-2ba704c6b408",
+      "type": "file",
+      "name": "src/constrain/__init__.py",
+      "filePath": "src/constrain/__init__.py",
+      "summary": "Language: Python | Path: src/constrain/__init__.py | ~3 lines",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-sym-constrain-10e7b74f7c69",
+      "type": "class",
+      "name": "OpenAIBackend",
+      "filePath": "src/constrain/backends/openai.py",
+      "summary": "class OpenAIBackend (src/constrain/backends/openai.py:17) ## Methods - complete(self, system: str, messages: list[dict], max_tokens: int | None = None) -> str",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-963dd463e1be",
+      "type": "class",
+      "name": "ConversationEngine",
+      "filePath": "src/constrain/engine.py",
+      "summary": "class ConversationEngine (src/constrain/engine.py:50) ## Methods - prime_interactive(self, initial_paths: list[Path] | None = None) -> int",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 3,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-d3d78315d2c4",
+      "type": "class",
+      "name": "DefaultIO",
+      "filePath": "src/constrain/engine.py",
+      "summary": "class DefaultIO (src/constrain/engine.py:32) ## Methods - display(self, text: str) -> None",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 2,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-71e97d8bf450",
+      "type": "class",
+      "name": "TerminalIO",
+      "filePath": "src/constrain/engine.py",
+      "summary": "class TerminalIO(Protocol) (src/constrain/engine.py:27) ## Methods - display(self, text: str) -> None",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 2,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-e0006e2bca1a",
+      "type": "class",
+      "name": "AnthropicBackend",
+      "filePath": "src/constrain/backends/anthropic.py",
+      "summary": "class AnthropicBackend (src/constrain/backends/anthropic.py:15) ## Methods - complete(self, system: str, messages: list[dict], max_tokens: int | None = None) -> str",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-04e0ec0918b8",
+      "type": "class",
+      "name": "Backend",
+      "filePath": "src/constrain/backends/__init__.py",
+      "summary": "class Backend(Protocol) (src/constrain/backends/__init__.py:29) ## Methods - complete(self, system: str, messages: list[dict], max_tokens: int | None = None) -> str",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-cc03fba7c2f3",
+      "type": "class",
+      "name": "BackendConnectionError",
+      "filePath": "src/constrain/backends/__init__.py",
+      "summary": "class BackendConnectionError(BackendError) (src/constrain/backends/__init__.py:21)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-5ff71f6c405e",
+      "type": "class",
+      "name": "BackendRateLimitError",
+      "filePath": "src/constrain/backends/__init__.py",
+      "summary": "class BackendRateLimitError(BackendError) (src/constrain/backends/__init__.py:13)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-eff67442a2da",
+      "type": "class",
+      "name": "BackendTimeoutError",
+      "filePath": "src/constrain/backends/__init__.py",
+      "summary": "class BackendTimeoutError(BackendError) (src/constrain/backends/__init__.py:17)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-c67b93a508bc",
+      "type": "class",
+      "name": "SafeGroup",
+      "filePath": "src/src_constrain_cli/cli.py",
+      "summary": "class SafeGroup(click.Group) (src/src_constrain_cli/cli.py:17) ## Methods - invoke(self, ctx: click.Context) -> None",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-mod-constrain-88ab0add19e3",
+      "type": "file",
+      "name": "src/src_constrain_posture/posture.py",
+      "filePath": "src/src_constrain_posture/posture.py",
+      "summary": "Language: Python | Path: src/src_constrain_posture/posture.py | ~171 lines ## Functions - get_revision_prompt(feedback: str, problem_model: ProblemModel) -> str",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 8,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-9c481a4e1fc2",
+      "type": "file",
+      "name": "contracts/src_constrain_synthesizer/interface.py",
+      "filePath": "contracts/src_constrain_synthesizer/interface.py",
+      "summary": "Language: Python | Path: contracts/src_constrain_synthesizer/interface.py | ~37 lines ## Functions - parse_synthesis_output( raw: str, ) -> tuple[str,str]",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 2,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-0f7569145494",
+      "type": "file",
+      "name": "contracts/src_constrain_posture/interface.py",
+      "filePath": "contracts/src_constrain_posture/interface.py",
+      "summary": "Language: Python | Path: contracts/src_constrain_posture/interface.py | ~160 lines ## Classes - Phase(Enum)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 10,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-15257ea9c19d",
+      "type": "file",
+      "name": "contracts/src_constrain_cli/interface.py",
+      "filePath": "contracts/src_constrain_cli/interface.py",
+      "summary": "Language: Python | Path: contracts/src_constrain_cli/interface.py | ~269 lines ## Classes - SafeGroup",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 15,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-sym-constrain-4ea39feed695",
+      "type": "class",
+      "name": "SafeGroup",
+      "filePath": "contracts/src_constrain_cli/interface.py",
+      "summary": "class SafeGroup (contracts/src_constrain_cli/interface.py:14)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-mod-constrain-30b3387bd66f",
+      "type": "file",
+      "name": "src/src_constrain_cli/cli.py",
+      "filePath": "src/src_constrain_cli/cli.py",
+      "summary": "Language: Python | Path: src/src_constrain_cli/cli.py | ~263 lines ## Classes - SafeGroup(click.Group)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 14,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-1f429726355c",
+      "type": "file",
+      "name": "contracts/src_constrain_session/interface.py",
+      "filePath": "contracts/src_constrain_session/interface.py",
+      "summary": "Language: Python | Path: contracts/src_constrain_session/interface.py | ~166 lines ## Classes - SessionDict",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 10,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-sym-constrain-1b8317686505",
+      "type": "class",
+      "name": "SessionDict",
+      "filePath": "contracts/src_constrain_session/interface.py",
+      "summary": "class SessionDict (contracts/src_constrain_session/interface.py:17)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-0055a46fb0cb",
+      "type": "class",
+      "name": "SessionManager",
+      "filePath": "contracts/src_constrain_session/interface.py",
+      "summary": "class SessionManager (contracts/src_constrain_session/interface.py:12)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-mod-constrain-b382b450b559",
+      "type": "file",
+      "name": "src/constrain/kindex_integration.py",
+      "filePath": "src/constrain/kindex_integration.py",
+      "summary": "Language: Python | Path: src/constrain/kindex_integration.py | ~328 lines ## Functions - close() -> None",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 14,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-d42159c9f138",
+      "type": "file",
+      "name": "src/constrain/archive.py",
+      "filePath": "src/constrain/archive.py",
+      "summary": "Language: Python | Path: src/constrain/archive.py | ~189 lines ## Functions - archive_artifacts( directory: Path, artifact_names: list[str], archive_base: Path, slug_source_priority: list[str] | None = None, ) -> tuple[Path|None,list[tuple[Path,Path]]]",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 8,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-a474321db642",
+      "type": "file",
+      "name": "src/src_constrain_synthesizer/synthesizer.py",
+      "filePath": "src/src_constrain_synthesizer/synthesizer.py",
+      "summary": "Language: Python | Path: src/src_constrain_synthesizer/synthesizer.py | ~36 lines ## Functions - parse_synthesis_output(raw: str) -> tuple[str,str]",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 2,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-sym-constrain-09a01dfe5935",
+      "type": "class",
+      "name": "SessionManager",
+      "filePath": "src/src_constrain_session/session.py",
+      "summary": "class SessionManager (src/src_constrain_session/session.py:19) ## Methods - create(self, posture_override: Posture | None = None) -> Session",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 6,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-6583127e9389",
+      "type": "class",
+      "name": "Message",
+      "filePath": "src/src_constrain_models/models.py",
+      "summary": "class Message(BaseModel) (src/src_constrain_models/models.py:32) [Merged from: Message] class Message(BaseModel) (src/constrain/models.py:33)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-6ada57a93c7b",
+      "type": "class",
+      "name": "ProblemModel",
+      "filePath": "src/src_constrain_models/models.py",
+      "summary": "class ProblemModel(BaseModel) (src/src_constrain_models/models.py:38) ## Methods - apply_update(self, update: dict) -> None",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-7928a0351503",
+      "type": "class",
+      "name": "Session",
+      "filePath": "src/src_constrain_models/models.py",
+      "summary": "class Session(BaseModel) (src/src_constrain_models/models.py:74) ## Methods - touch(self) -> None",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-48bef6b9babc",
+      "type": "class",
+      "name": "Constraint",
+      "filePath": "src/src_constrain_models/models.py",
+      "summary": "class Constraint(BaseModel) (src/src_constrain_models/models.py:65) [Merged from: Constraint] class Constraint(BaseModel) (src/constrain/models.py:66)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-mod-constrain-d5d12b51f540",
+      "type": "file",
+      "name": "src/constrain/session.py",
+      "filePath": "src/constrain/session.py",
+      "summary": "Language: Python | Path: src/constrain/session.py | ~106 lines ## Classes - SessionManager",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-0dcc7a750401",
+      "type": "file",
+      "name": "src/src_constrain_session/session.py",
+      "filePath": "src/src_constrain_session/session.py",
+      "summary": "Language: Python | Path: src/src_constrain_session/session.py | ~106 lines ## Classes - SessionManager",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-c9c104a65621",
+      "type": "file",
+      "name": "src/constrain/mcp_server.py",
+      "filePath": "src/constrain/mcp_server.py",
+      "summary": "Language: Python | Path: src/constrain/mcp_server.py | ~241 lines ## Classes - ConstrainMCPServer",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 6,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-sym-constrain-ec3300eb2f35",
+      "type": "class",
+      "name": "ConstrainMCPServer",
+      "filePath": "src/constrain/mcp_server.py",
+      "summary": "class ConstrainMCPServer (src/constrain/mcp_server.py:14) ## Methods - resource_artifacts(self, session_id: str) -> dict",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 7,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-mod-constrain-bd0816136f7b",
+      "type": "file",
+      "name": "contracts/src_constrain_models/interface.py",
+      "filePath": "contracts/src_constrain_models/interface.py",
+      "summary": "Language: Python | Path: contracts/src_constrain_models/interface.py | ~98 lines ## Classes - Constraint",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 9,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-sym-constrain-7471afb641b1",
+      "type": "class",
+      "name": "Constraint",
+      "filePath": "contracts/src_constrain_models/interface.py",
+      "summary": "class Constraint (contracts/src_constrain_models/interface.py:50)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-aa17a7d689c1",
+      "type": "class",
+      "name": "ProblemModel",
+      "filePath": "contracts/src_constrain_models/interface.py",
+      "summary": "class ProblemModel (contracts/src_constrain_models/interface.py:38)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-8c1ac4e52bc9",
+      "type": "class",
+      "name": "Session",
+      "filePath": "contracts/src_constrain_models/interface.py",
+      "summary": "class Session (contracts/src_constrain_models/interface.py:59)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-mod-constrain-06b916129dbd",
+      "type": "file",
+      "name": "src/constrain/models.py",
+      "filePath": "src/constrain/models.py",
+      "summary": "Language: Python | Path: src/constrain/models.py | ~95 lines ## Classes - Constraint(BaseModel)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 7,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-a5c0dece879a",
+      "type": "file",
+      "name": "src/src_constrain_models/models.py",
+      "filePath": "src/src_constrain_models/models.py",
+      "summary": "Language: Python | Path: src/src_constrain_models/models.py | ~89 lines ## Classes - Constraint(BaseModel)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 7,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-mod-constrain-d2abe1bf9d51",
+      "type": "file",
+      "name": "contracts/src_constrain_engine/interface.py",
+      "filePath": "contracts/src_constrain_engine/interface.py",
+      "summary": "Language: Python | Path: contracts/src_constrain_engine/interface.py | ~293 lines ## Classes - ConversationEngine",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 19,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-sym-constrain-f479748bcfcc",
+      "type": "class",
+      "name": "ConversationEngine",
+      "filePath": "contracts/src_constrain_engine/interface.py",
+      "summary": "class ConversationEngine (contracts/src_constrain_engine/interface.py:28)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-a933e633dede",
+      "type": "class",
+      "name": "DefaultIO",
+      "filePath": "contracts/src_constrain_engine/interface.py",
+      "summary": "class DefaultIO (contracts/src_constrain_engine/interface.py:17)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-3f0505f68a65",
+      "type": "class",
+      "name": "TerminalIO",
+      "filePath": "contracts/src_constrain_engine/interface.py",
+      "summary": "class TerminalIO (contracts/src_constrain_engine/interface.py:13)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-mod-constrain-5565528d286a",
+      "type": "file",
+      "name": "src/src_constrain_engine/engine.py",
+      "filePath": "src/src_constrain_engine/engine.py",
+      "summary": "Language: Python | Path: src/src_constrain_engine/engine.py | ~336 lines ## Classes - ConversationEngine",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 4,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "artifact",
+        "toolTier": "C"
+      }
+    },
+    {
+      "id": "code-sym-constrain-5532b36c7f99",
+      "type": "class",
+      "name": "SafeGroup",
+      "filePath": "src/constrain/cli.py",
+      "summary": "class SafeGroup(click.Group) (src/constrain/cli.py:20) ## Methods - invoke(self, ctx: click.Context) -> None",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "Python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-30287d860139",
+      "type": "concept",
+      "name": "Phase",
+      "filePath": "/Users/jmcentire/Code/constrain/contracts/src_constrain_posture/interface.py:19",
+      "summary": "class Phase(Enum) (contracts/src_constrain_posture/interface.py:19)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-426ca85b3bd6",
+      "type": "concept",
+      "name": "Posture",
+      "filePath": "/Users/jmcentire/Code/constrain/contracts/src_constrain_posture/interface.py:11",
+      "summary": "class Posture(Enum) (contracts/src_constrain_posture/interface.py:11)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-7b99467fa086",
+      "type": "concept",
+      "name": "SessionManager",
+      "filePath": "/Users/jmcentire/Code/constrain/src/constrain/session.py:19",
+      "summary": "class SessionManager (src/constrain/session.py:19) ## Methods - create(self, posture_override: Posture | None = None) -> Session",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-f388c66a2b4d",
+      "type": "concept",
+      "name": "Severity",
+      "filePath": "/Users/jmcentire/Code/constrain/contracts/src_constrain_models/interface.py:27",
+      "summary": "class Severity(Enum) (contracts/src_constrain_models/interface.py:27)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-5a047f6f0b45",
+      "type": "concept",
+      "name": "Message",
+      "filePath": "/Users/jmcentire/Code/constrain/src/constrain/models.py:33",
+      "summary": "class Message(BaseModel) (src/constrain/models.py:33)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-d25a16fe74f5",
+      "type": "concept",
+      "name": "Phase",
+      "filePath": "/Users/jmcentire/Code/constrain/src/constrain/models.py:20",
+      "summary": "class Phase(str, enum.Enum) (src/constrain/models.py:20)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-57eaae2595a0",
+      "type": "concept",
+      "name": "Posture",
+      "filePath": "/Users/jmcentire/Code/constrain/src/constrain/models.py:12",
+      "summary": "class Posture(str, enum.Enum) (src/constrain/models.py:12)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-cea99cde3e63",
+      "type": "concept",
+      "name": "ProblemModel",
+      "filePath": "/Users/jmcentire/Code/constrain/src/constrain/models.py:39",
+      "summary": "class ProblemModel(BaseModel) (src/constrain/models.py:39) ## Methods - apply_update(self, update: dict) -> None",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-392dc38f8a3b",
+      "type": "concept",
+      "name": "Session",
+      "filePath": "/Users/jmcentire/Code/constrain/src/constrain/models.py:77",
+      "summary": "class Session(BaseModel) (src/constrain/models.py:77) ## Methods - touch(self) -> None",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-b9114a4fcc33",
+      "type": "concept",
+      "name": "Severity",
+      "filePath": "/Users/jmcentire/Code/constrain/src/constrain/models.py:27",
+      "summary": "class Severity(str, enum.Enum) (src/constrain/models.py:27)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    },
+    {
+      "id": "code-sym-constrain-00d5e3281671",
+      "type": "concept",
+      "name": "Constraint",
+      "filePath": "/Users/jmcentire/Code/constrain/src/constrain/models.py:66",
+      "summary": "class Constraint(BaseModel) (src/constrain/models.py:66)",
+      "tags": [
+        "code",
+        "python"
+      ],
+      "complexity": 1,
+      "languageNotes": {
+        "language": "python",
+        "kindexType": "concept",
+        "toolTier": ""
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "code-sym-constrain-c48b6a4b32c1",
+      "target": "code-mod-constrain-85803830a0a8",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-1caadeafc7f2",
+      "target": "code-mod-constrain-f70e78d8230e",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-972e4541ca6a",
+      "target": "code-mod-constrain-e99bc6f7b4bd",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-56dc84a9daeb",
+      "target": "code-mod-constrain-1b799e706cec",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-da9383be582b",
+      "target": "code-mod-constrain-3dafb969f47c",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-738a9649bd83",
+      "target": "code-mod-constrain-bd0816136f7b",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-b0e92d2286ba",
+      "target": "code-mod-constrain-bd0816136f7b",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-b0e92d2286ba",
+      "target": "code-mod-constrain-0f7569145494",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-b0e92d2286ba",
+      "target": "code-sym-constrain-9d1f02524493",
+      "type": "related",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-9d1f02524493",
+      "target": "code-mod-constrain-a5c0dece879a",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-9d1f02524493",
+      "target": "code-mod-constrain-06b916129dbd",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-9d1f02524493",
+      "target": "code-sym-constrain-b0e92d2286ba",
+      "type": "related",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-b4ef2f84b6ae",
+      "target": "code-mod-constrain-273ee2fae8a4",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-b4ef2f84b6ae",
+      "target": "code-sym-constrain-28cc274c76e9",
+      "type": "related",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-28cc274c76e9",
+      "target": "code-mod-constrain-273ee2fae8a4",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-28cc274c76e9",
+      "target": "code-sym-constrain-b4ef2f84b6ae",
+      "type": "related",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-85e6145abc38",
+      "target": "code-mod-constrain-a5c0dece879a",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-85e6145abc38",
+      "target": "code-mod-constrain-06b916129dbd",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-22fb2ee4e9f3",
+      "target": "code-mod-constrain-bd0816136f7b",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-22fb2ee4e9f3",
+      "target": "code-mod-constrain-0f7569145494",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-22fb2ee4e9f3",
+      "target": "code-sym-constrain-7be1e2de9e74",
+      "type": "related",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-7be1e2de9e74",
+      "target": "code-mod-constrain-a5c0dece879a",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-7be1e2de9e74",
+      "target": "code-mod-constrain-06b916129dbd",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-7be1e2de9e74",
+      "target": "code-sym-constrain-22fb2ee4e9f3",
+      "type": "related",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-5c85a271cf98",
+      "target": "code-mod-constrain-d2abe1bf9d51",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-5c85a271cf98",
+      "target": "code-sym-constrain-eae71fef95a9",
+      "type": "related",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-eae71fef95a9",
+      "target": "code-mod-constrain-ec8108dbfcdc",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-eae71fef95a9",
+      "target": "code-sym-constrain-5c85a271cf98",
+      "type": "related",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-mod-constrain-ec8108dbfcdc",
+      "target": "code-mod-constrain-1f46cb1db338",
+      "type": "depends_on",
+      "direction": "outbound",
+      "weight": 0.5
+    },
+    {
+      "source": "code-mod-constrain-c4ce66827578",
+      "target": "code-mod-constrain-b382b450b559",
+      "type": "depends_on",
+      "direction": "outbound",
+      "weight": 0.5
+    },
+    {
+      "source": "code-mod-constrain-c4ce66827578",
+      "target": "code-sym-constrain-c67b93a508bc",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-mod-constrain-23f50866c885",
+      "target": "code-mod-constrain-1f46cb1db338",
+      "type": "depends_on",
+      "direction": "outbound",
+      "weight": 0.5
+    },
+    {
+      "source": "code-sym-constrain-745c9acdbd33",
+      "target": "code-mod-constrain-23f50866c885",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-10e7b74f7c69",
+      "target": "code-mod-constrain-bae1919e0cc6",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-963dd463e1be",
+      "target": "code-mod-constrain-ec8108dbfcdc",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-d3d78315d2c4",
+      "target": "code-mod-constrain-ec8108dbfcdc",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-71e97d8bf450",
+      "target": "code-mod-constrain-ec8108dbfcdc",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-e0006e2bca1a",
+      "target": "code-mod-constrain-3e0b305dc5e2",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-04e0ec0918b8",
+      "target": "code-mod-constrain-273ee2fae8a4",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-cc03fba7c2f3",
+      "target": "code-mod-constrain-273ee2fae8a4",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-5ff71f6c405e",
+      "target": "code-mod-constrain-273ee2fae8a4",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-eff67442a2da",
+      "target": "code-mod-constrain-273ee2fae8a4",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-c67b93a508bc",
+      "target": "code-mod-constrain-30b3387bd66f",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-c67b93a508bc",
+      "target": "code-mod-constrain-c4ce66827578",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-mod-constrain-0f7569145494",
+      "target": "code-sym-constrain-22fb2ee4e9f3",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-mod-constrain-0f7569145494",
+      "target": "code-sym-constrain-b0e92d2286ba",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-4ea39feed695",
+      "target": "code-mod-constrain-15257ea9c19d",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-1b8317686505",
+      "target": "code-mod-constrain-1f429726355c",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-0055a46fb0cb",
+      "target": "code-mod-constrain-1f429726355c",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-mod-constrain-d42159c9f138",
+      "target": "code-mod-constrain-1f46cb1db338",
+      "type": "depends_on",
+      "direction": "outbound",
+      "weight": 0.5
+    },
+    {
+      "source": "code-mod-constrain-a474321db642",
+      "target": "code-mod-constrain-1f46cb1db338",
+      "type": "depends_on",
+      "direction": "outbound",
+      "weight": 0.5
+    },
+    {
+      "source": "code-sym-constrain-09a01dfe5935",
+      "target": "code-mod-constrain-0dcc7a750401",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-09a01dfe5935",
+      "target": "code-mod-constrain-d5d12b51f540",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-6583127e9389",
+      "target": "code-mod-constrain-a5c0dece879a",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-6583127e9389",
+      "target": "code-mod-constrain-06b916129dbd",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-6ada57a93c7b",
+      "target": "code-mod-constrain-a5c0dece879a",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-6ada57a93c7b",
+      "target": "code-mod-constrain-06b916129dbd",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-7928a0351503",
+      "target": "code-mod-constrain-a5c0dece879a",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-7928a0351503",
+      "target": "code-mod-constrain-06b916129dbd",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-48bef6b9babc",
+      "target": "code-mod-constrain-a5c0dece879a",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-48bef6b9babc",
+      "target": "code-mod-constrain-06b916129dbd",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-mod-constrain-d5d12b51f540",
+      "target": "code-sym-constrain-09a01dfe5935",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-ec3300eb2f35",
+      "target": "code-mod-constrain-c9c104a65621",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-7471afb641b1",
+      "target": "code-mod-constrain-bd0816136f7b",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-aa17a7d689c1",
+      "target": "code-mod-constrain-bd0816136f7b",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-8c1ac4e52bc9",
+      "target": "code-mod-constrain-bd0816136f7b",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-mod-constrain-06b916129dbd",
+      "target": "code-sym-constrain-48bef6b9babc",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-mod-constrain-06b916129dbd",
+      "target": "code-sym-constrain-6ada57a93c7b",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-mod-constrain-06b916129dbd",
+      "target": "code-sym-constrain-85e6145abc38",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-mod-constrain-06b916129dbd",
+      "target": "code-sym-constrain-7be1e2de9e74",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-mod-constrain-06b916129dbd",
+      "target": "code-sym-constrain-7928a0351503",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-mod-constrain-06b916129dbd",
+      "target": "code-sym-constrain-6583127e9389",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-mod-constrain-06b916129dbd",
+      "target": "code-sym-constrain-9d1f02524493",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-f479748bcfcc",
+      "target": "code-mod-constrain-d2abe1bf9d51",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-a933e633dede",
+      "target": "code-mod-constrain-d2abe1bf9d51",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-3f0505f68a65",
+      "target": "code-mod-constrain-d2abe1bf9d51",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-mod-constrain-5565528d286a",
+      "target": "code-mod-constrain-1f46cb1db338",
+      "type": "depends_on",
+      "direction": "outbound",
+      "weight": 0.5
+    },
+    {
+      "source": "code-mod-constrain-5565528d286a",
+      "target": "code-mod-constrain-3e0b305dc5e2",
+      "type": "depends_on",
+      "direction": "outbound",
+      "weight": 0.5
+    },
+    {
+      "source": "code-sym-constrain-5532b36c7f99",
+      "target": "code-mod-constrain-c4ce66827578",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.6
+    },
+    {
+      "source": "code-sym-constrain-30287d860139",
+      "target": "code-mod-constrain-0f7569145494",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-426ca85b3bd6",
+      "target": "code-mod-constrain-0f7569145494",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-7b99467fa086",
+      "target": "code-mod-constrain-d5d12b51f540",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-f388c66a2b4d",
+      "target": "code-mod-constrain-bd0816136f7b",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-5a047f6f0b45",
+      "target": "code-mod-constrain-06b916129dbd",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-d25a16fe74f5",
+      "target": "code-mod-constrain-06b916129dbd",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-57eaae2595a0",
+      "target": "code-mod-constrain-06b916129dbd",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-cea99cde3e63",
+      "target": "code-mod-constrain-06b916129dbd",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-392dc38f8a3b",
+      "target": "code-mod-constrain-06b916129dbd",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-b9114a4fcc33",
+      "target": "code-mod-constrain-06b916129dbd",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    },
+    {
+      "source": "code-sym-constrain-00d5e3281671",
+      "target": "code-mod-constrain-06b916129dbd",
+      "type": "contains",
+      "direction": "outbound",
+      "weight": 0.0108
+    }
+  ],
+  "layers": [
+    {
+      "id": "core",
+      "name": "Core",
+      "description": "Kindex-inferred core layer.",
+      "nodeIds": [
+        "code-mod-constrain-0dcc7a750401",
+        "code-mod-constrain-0f7569145494",
+        "code-mod-constrain-15257ea9c19d",
+        "code-mod-constrain-1b799e706cec",
+        "code-mod-constrain-1f429726355c",
+        "code-mod-constrain-1f46cb1db338",
+        "code-mod-constrain-23f50866c885",
+        "code-mod-constrain-273ee2fae8a4",
+        "code-mod-constrain-2ba704c6b408",
+        "code-mod-constrain-30b3387bd66f",
+        "code-mod-constrain-3dafb969f47c",
+        "code-mod-constrain-3e0b305dc5e2",
+        "code-mod-constrain-5565528d286a",
+        "code-mod-constrain-85803830a0a8",
+        "code-mod-constrain-88ab0add19e3",
+        "code-mod-constrain-9c481a4e1fc2",
+        "code-mod-constrain-a474321db642",
+        "code-mod-constrain-b382b450b559",
+        "code-mod-constrain-bae1919e0cc6",
+        "code-mod-constrain-c4ce66827578",
+        "code-mod-constrain-c9c104a65621",
+        "code-mod-constrain-d2abe1bf9d51",
+        "code-mod-constrain-d42159c9f138",
+        "code-mod-constrain-d5d12b51f540",
+        "code-mod-constrain-e99bc6f7b4bd",
+        "code-mod-constrain-ec8108dbfcdc",
+        "code-mod-constrain-f70e78d8230e",
+        "code-sym-constrain-30287d860139",
+        "code-sym-constrain-426ca85b3bd6",
+        "code-sym-constrain-7b99467fa086"
+      ]
+    },
+    {
+      "id": "data",
+      "name": "Data",
+      "description": "Kindex-inferred data layer.",
+      "nodeIds": [
+        "code-mod-constrain-06b916129dbd",
+        "code-mod-constrain-a5c0dece879a",
+        "code-mod-constrain-bd0816136f7b",
+        "code-sym-constrain-00d5e3281671",
+        "code-sym-constrain-392dc38f8a3b",
+        "code-sym-constrain-57eaae2595a0",
+        "code-sym-constrain-5a047f6f0b45",
+        "code-sym-constrain-b9114a4fcc33",
+        "code-sym-constrain-cea99cde3e63",
+        "code-sym-constrain-d25a16fe74f5",
+        "code-sym-constrain-f388c66a2b4d"
+      ]
+    },
+    {
+      "id": "domain",
+      "name": "Domain",
+      "description": "Kindex-inferred domain layer.",
+      "nodeIds": [
+        "code-sym-constrain-0055a46fb0cb",
+        "code-sym-constrain-04e0ec0918b8",
+        "code-sym-constrain-09a01dfe5935",
+        "code-sym-constrain-10e7b74f7c69",
+        "code-sym-constrain-1b8317686505",
+        "code-sym-constrain-1caadeafc7f2",
+        "code-sym-constrain-22fb2ee4e9f3",
+        "code-sym-constrain-28cc274c76e9",
+        "code-sym-constrain-3f0505f68a65",
+        "code-sym-constrain-48bef6b9babc",
+        "code-sym-constrain-4ea39feed695",
+        "code-sym-constrain-5532b36c7f99",
+        "code-sym-constrain-56dc84a9daeb",
+        "code-sym-constrain-5c85a271cf98",
+        "code-sym-constrain-5ff71f6c405e",
+        "code-sym-constrain-6583127e9389",
+        "code-sym-constrain-6ada57a93c7b",
+        "code-sym-constrain-71e97d8bf450",
+        "code-sym-constrain-738a9649bd83",
+        "code-sym-constrain-745c9acdbd33",
+        "code-sym-constrain-7471afb641b1",
+        "code-sym-constrain-7928a0351503",
+        "code-sym-constrain-7be1e2de9e74",
+        "code-sym-constrain-85e6145abc38",
+        "code-sym-constrain-8c1ac4e52bc9",
+        "code-sym-constrain-963dd463e1be",
+        "code-sym-constrain-972e4541ca6a",
+        "code-sym-constrain-9d1f02524493",
+        "code-sym-constrain-a933e633dede",
+        "code-sym-constrain-aa17a7d689c1",
+        "code-sym-constrain-b0e92d2286ba",
+        "code-sym-constrain-b4ef2f84b6ae",
+        "code-sym-constrain-c48b6a4b32c1",
+        "code-sym-constrain-c67b93a508bc",
+        "code-sym-constrain-cc03fba7c2f3",
+        "code-sym-constrain-d3d78315d2c4",
+        "code-sym-constrain-da9383be582b",
+        "code-sym-constrain-e0006e2bca1a",
+        "code-sym-constrain-eae71fef95a9",
+        "code-sym-constrain-ec3300eb2f35",
+        "code-sym-constrain-eff67442a2da",
+        "code-sym-constrain-f479748bcfcc"
+      ]
+    }
+  ],
+  "tour": [
+    {
+      "order": 1,
+      "title": "Core",
+      "description": "Review 30 node(s) in the Core layer.",
+      "nodeIds": [
+        "code-mod-constrain-0dcc7a750401",
+        "code-mod-constrain-0f7569145494",
+        "code-mod-constrain-15257ea9c19d",
+        "code-mod-constrain-1b799e706cec",
+        "code-mod-constrain-1f429726355c",
+        "code-mod-constrain-1f46cb1db338",
+        "code-mod-constrain-23f50866c885",
+        "code-mod-constrain-273ee2fae8a4",
+        "code-mod-constrain-2ba704c6b408",
+        "code-mod-constrain-30b3387bd66f",
+        "code-mod-constrain-3dafb969f47c",
+        "code-mod-constrain-3e0b305dc5e2",
+        "code-mod-constrain-5565528d286a",
+        "code-mod-constrain-85803830a0a8",
+        "code-mod-constrain-88ab0add19e3",
+        "code-mod-constrain-9c481a4e1fc2",
+        "code-mod-constrain-a474321db642",
+        "code-mod-constrain-b382b450b559",
+        "code-mod-constrain-bae1919e0cc6",
+        "code-mod-constrain-c4ce66827578",
+        "code-mod-constrain-c9c104a65621",
+        "code-mod-constrain-d2abe1bf9d51",
+        "code-mod-constrain-d42159c9f138",
+        "code-mod-constrain-d5d12b51f540",
+        "code-mod-constrain-e99bc6f7b4bd"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "Data",
+      "description": "Review 11 node(s) in the Data layer.",
+      "nodeIds": [
+        "code-mod-constrain-06b916129dbd",
+        "code-mod-constrain-a5c0dece879a",
+        "code-mod-constrain-bd0816136f7b",
+        "code-sym-constrain-00d5e3281671",
+        "code-sym-constrain-392dc38f8a3b",
+        "code-sym-constrain-57eaae2595a0",
+        "code-sym-constrain-5a047f6f0b45",
+        "code-sym-constrain-b9114a4fcc33",
+        "code-sym-constrain-cea99cde3e63",
+        "code-sym-constrain-d25a16fe74f5",
+        "code-sym-constrain-f388c66a2b4d"
+      ]
+    },
+    {
+      "order": 3,
+      "title": "Domain",
+      "description": "Review 42 node(s) in the Domain layer.",
+      "nodeIds": [
+        "code-sym-constrain-0055a46fb0cb",
+        "code-sym-constrain-04e0ec0918b8",
+        "code-sym-constrain-09a01dfe5935",
+        "code-sym-constrain-10e7b74f7c69",
+        "code-sym-constrain-1b8317686505",
+        "code-sym-constrain-1caadeafc7f2",
+        "code-sym-constrain-22fb2ee4e9f3",
+        "code-sym-constrain-28cc274c76e9",
+        "code-sym-constrain-3f0505f68a65",
+        "code-sym-constrain-48bef6b9babc",
+        "code-sym-constrain-4ea39feed695",
+        "code-sym-constrain-5532b36c7f99",
+        "code-sym-constrain-56dc84a9daeb",
+        "code-sym-constrain-5c85a271cf98",
+        "code-sym-constrain-5ff71f6c405e",
+        "code-sym-constrain-6583127e9389",
+        "code-sym-constrain-6ada57a93c7b",
+        "code-sym-constrain-71e97d8bf450",
+        "code-sym-constrain-738a9649bd83",
+        "code-sym-constrain-745c9acdbd33",
+        "code-sym-constrain-7471afb641b1",
+        "code-sym-constrain-7928a0351503",
+        "code-sym-constrain-7be1e2de9e74",
+        "code-sym-constrain-85e6145abc38",
+        "code-sym-constrain-8c1ac4e52bc9"
+      ]
+    }
+  ]
+}
