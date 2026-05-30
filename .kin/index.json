@@ -1,0 +1,969 @@
+{
+  "domains": [
+    "code",
+    "python"
+  ],
+  "node_count": 87,
+  "nodes": [
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-06b916129dbd",
+      "title": "src/constrain/models.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-0dcc7a750401",
+      "title": "src/src_constrain_session/session.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-0f7569145494",
+      "title": "contracts/src_constrain_posture/interface.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-15257ea9c19d",
+      "title": "contracts/src_constrain_cli/interface.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-1b799e706cec",
+      "title": "src/constrain/backends/cursor.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-1f429726355c",
+      "title": "contracts/src_constrain_session/interface.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-1f46cb1db338",
+      "title": "src/constrain/posture.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-23f50866c885",
+      "title": "src/constrain/synthesizer.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-273ee2fae8a4",
+      "title": "src/constrain/backends/__init__.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-2ba704c6b408",
+      "title": "src/constrain/__init__.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-30b3387bd66f",
+      "title": "src/src_constrain_cli/cli.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-3dafb969f47c",
+      "title": "src/constrain/backends/claude.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-3e0b305dc5e2",
+      "title": "src/constrain/backends/anthropic.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-5565528d286a",
+      "title": "src/src_constrain_engine/engine.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-85803830a0a8",
+      "title": "src/constrain/backends/opencode.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-88ab0add19e3",
+      "title": "src/src_constrain_posture/posture.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-9c481a4e1fc2",
+      "title": "contracts/src_constrain_synthesizer/interface.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-a474321db642",
+      "title": "src/src_constrain_synthesizer/synthesizer.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-a5c0dece879a",
+      "title": "src/src_constrain_models/models.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-b382b450b559",
+      "title": "src/constrain/kindex_integration.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-bae1919e0cc6",
+      "title": "src/constrain/backends/openai.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-bd0816136f7b",
+      "title": "contracts/src_constrain_models/interface.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-c4ce66827578",
+      "title": "src/constrain/cli.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-c9c104a65621",
+      "title": "src/constrain/mcp_server.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-d2abe1bf9d51",
+      "title": "contracts/src_constrain_engine/interface.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-d42159c9f138",
+      "title": "src/constrain/archive.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-d5d12b51f540",
+      "title": "src/constrain/session.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-e99bc6f7b4bd",
+      "title": "src/constrain/backends/codex.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-ec8108dbfcdc",
+      "title": "src/constrain/engine.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-mod-constrain-f70e78d8230e",
+      "title": "src/constrain/backends/local_agent.py",
+      "type": "artifact",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-0055a46fb0cb",
+      "title": "SessionManager",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-00d5e3281671",
+      "title": "Constraint",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-04e0ec0918b8",
+      "title": "Backend",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-09a01dfe5935",
+      "title": "SessionManager",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-09b9a0471d32",
+      "title": "EngineConfig",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-10e7b74f7c69",
+      "title": "OpenAIBackend",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-1b8317686505",
+      "title": "SessionDict",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-1caadeafc7f2",
+      "title": "LocalAgentBackend",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-22fb2ee4e9f3",
+      "title": "Phase",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-28cc274c76e9",
+      "title": "BackendError",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-30287d860139",
+      "title": "Phase",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-392dc38f8a3b",
+      "title": "Session",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-3f0505f68a65",
+      "title": "TerminalIO",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-3f53faac8d8f",
+      "title": "TerminalIO",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-426ca85b3bd6",
+      "title": "Posture",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-48bef6b9babc",
+      "title": "Constraint",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-4ea39feed695",
+      "title": "SafeGroup",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-5532b36c7f99",
+      "title": "SafeGroup",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-56dc84a9daeb",
+      "title": "CursorBackend",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-57eaae2595a0",
+      "title": "Posture",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-5a047f6f0b45",
+      "title": "Message",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-5c85a271cf98",
+      "title": "EngineConfig",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-5ff71f6c405e",
+      "title": "BackendRateLimitError",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-6583127e9389",
+      "title": "Message",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-6ada57a93c7b",
+      "title": "ProblemModel",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-71e97d8bf450",
+      "title": "TerminalIO",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-738a9649bd83",
+      "title": "Message",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-745c9acdbd33",
+      "title": "SynthesisArtifacts",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-7471afb641b1",
+      "title": "Constraint",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-7928a0351503",
+      "title": "Session",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-7b99467fa086",
+      "title": "SessionManager",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-7be1e2de9e74",
+      "title": "Phase",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-85e6145abc38",
+      "title": "Severity",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-8c1ac4e52bc9",
+      "title": "Session",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-963dd463e1be",
+      "title": "ConversationEngine",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-972e4541ca6a",
+      "title": "CodexBackend",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-9d1f02524493",
+      "title": "Posture",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-a30d69d7d84e",
+      "title": "DefaultIO",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-a6853eae9e58",
+      "title": "ConversationEngine",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-a933e633dede",
+      "title": "DefaultIO",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-aa17a7d689c1",
+      "title": "ProblemModel",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-b0e92d2286ba",
+      "title": "Posture",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-b4ef2f84b6ae",
+      "title": "BackendAuthError",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-b9114a4fcc33",
+      "title": "Severity",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-c48b6a4b32c1",
+      "title": "OpenCodeBackend",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-c67b93a508bc",
+      "title": "SafeGroup",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-cc03fba7c2f3",
+      "title": "BackendConnectionError",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-cea99cde3e63",
+      "title": "ProblemModel",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-d25a16fe74f5",
+      "title": "Phase",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-d3d78315d2c4",
+      "title": "DefaultIO",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-da9383be582b",
+      "title": "ClaudeBackend",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-e0006e2bca1a",
+      "title": "AnthropicBackend",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-eae71fef95a9",
+      "title": "EngineConfig",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-ec3300eb2f35",
+      "title": "ConstrainMCPServer",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-eff67442a2da",
+      "title": "BackendTimeoutError",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-f388c66a2b4d",
+      "title": "Severity",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    },
+    {
+      "domains": [
+        "code",
+        "python"
+      ],
+      "id": "code-sym-constrain-f479748bcfcc",
+      "title": "ConversationEngine",
+      "type": "concept",
+      "updated_at": "2026-05-30T14:47:39",
+      "weight": 0.5
+    }
+  ],
+  "repo": "constrain",
+  "source_updated_at": "2026-05-30T14:47:39",
+  "version": 1
+}
