@@ -37,6 +37,8 @@ from constrain.models import Phase
 def mock_env(monkeypatch):
     """Fixture to provide clean environment for each test."""
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.delenv("WANDER_ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.delenv("JMC_ANTHROPIC_API_KEY", raising=False)
     monkeypatch.delenv("CONSTRAIN_MIN_UNDERSTAND", raising=False)
     monkeypatch.delenv("CONSTRAIN_MAX_UNDERSTAND", raising=False)
     monkeypatch.delenv("CONSTRAIN_MIN_CHALLENGE", raising=False)
@@ -92,6 +94,13 @@ def test_ensure_api_key_happy_path(mock_env):
     mock_env.setenv("ANTHROPIC_API_KEY", "  my-api-key-123  ")
 
     # Should not raise
+    ensure_api_key()
+
+
+def test_ensure_api_key_accepts_wander_key(mock_env):
+    """Wander is a valid Anthropic billing key for Constrain."""
+    mock_env.setenv("WANDER_ANTHROPIC_API_KEY", "wander-key")
+
     ensure_api_key()
 
 

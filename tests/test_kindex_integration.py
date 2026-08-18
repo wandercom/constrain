@@ -10,6 +10,18 @@ from unittest.mock import patch, MagicMock
 # ============================================================================
 
 class TestAvailability:
+    def test_is_available_honors_explicit_disable(self, monkeypatch):
+        """A bounded run can exclude ambient graph context and publishing."""
+        from constrain import kindex_integration as ki
+
+        monkeypatch.setenv("CONSTRAIN_KINDEX", "off")
+        ki._store = MagicMock()
+        ki._checked = True
+
+        assert ki.is_available() is False
+
+        ki.close()
+
     def test_is_available_when_kindex_missing(self):
         """is_available returns False when kindex is not installed."""
         from constrain import kindex_integration as ki

@@ -42,10 +42,15 @@ def ensure_api_key() -> None:
     """Validate that the required API key is set for the active backend."""
     backend_name = os.environ.get("CONSTRAIN_BACKEND", "anthropic")
     if backend_name == "anthropic":
-        key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
-        if not key:
+        key_names = (
+            "WANDER_ANTHROPIC_API_KEY",
+            "ANTHROPIC_API_KEY",
+            "JMC_ANTHROPIC_API_KEY",
+        )
+        if not any(os.environ.get(name, "").strip() for name in key_names):
             raise click.ClickException(
-                "ANTHROPIC_API_KEY not set. Export it or add it to your shell profile."
+                "No Anthropic API key set. Export WANDER_ANTHROPIC_API_KEY "
+                "(preferred), ANTHROPIC_API_KEY, or JMC_ANTHROPIC_API_KEY."
             )
     elif backend_name == "openai":
         key = os.environ.get("OPENAI_API_KEY", "").strip()

@@ -910,10 +910,10 @@ def test_display_resume_summary(mock_session, mock_session_mgr, mock_io, mock_cl
 # ============================================================================
 
 def test_invariant_model_constant():
-    """Default Anthropic model is claude-sonnet-4-20250514"""
+    """Default Anthropic model is a current Claude model."""
     from constrain.backends.anthropic import DEFAULT_MODEL
 
-    assert DEFAULT_MODEL == "claude-sonnet-4-20250514"
+    assert DEFAULT_MODEL == "claude-sonnet-4-6"
 
 
 def test_invariant_phase_order():

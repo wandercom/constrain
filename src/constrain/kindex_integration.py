@@ -16,6 +16,7 @@ Usage from constrain::
 from __future__ import annotations
 
 import logging
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -35,6 +36,9 @@ _checked = False
 def is_available() -> bool:
     """Check if kindex is installed and the store is accessible."""
     global _checked
+    enabled = os.environ.get("CONSTRAIN_KINDEX", "on").strip().lower()
+    if enabled in {"0", "false", "no", "off"}:
+        return False
     if _checked:
         return _store is not None
     _checked = True

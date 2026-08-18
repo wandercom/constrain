@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+
 from . import (
     BackendAuthError,
     BackendConnectionError,
@@ -9,7 +11,22 @@ from . import (
     BackendTimeoutError,
 )
 
-DEFAULT_MODEL = "claude-sonnet-4-20250514"
+DEFAULT_MODEL = "claude-sonnet-4-6"
+
+_API_KEY_ENV_VARS = (
+    "WANDER_ANTHROPIC_API_KEY",
+    "ANTHROPIC_API_KEY",
+    "JMC_ANTHROPIC_API_KEY",
+)
+
+
+def _anthropic_api_key() -> str | None:
+    """Resolve the Anthropic billing key, preferring the Wander account."""
+    for name in _API_KEY_ENV_VARS:
+        value = os.environ.get(name, "").strip()
+        if value:
+            return value
+    return None
 
 
 class AnthropicBackend:
@@ -25,7 +42,15 @@ class AnthropicBackend:
             )
         self._anthropic = _anthropic
         self.model = model or DEFAULT_MODEL
-        self.client = client or _anthropic.Anthropic()
+        if client is not None:
+            self.client = client
+        else:
+            api_key = _anthropic_api_key()
+            self.client = (
+                _anthropic.Anthropic(api_key=api_key)
+                if api_key
+                else _anthropic.Anthropic()
+            )
         self.max_tokens = max_tokens
 
     def complete(self, system: str, messages: list[dict], max_tokens: int | None = None) -> str:
@@ -36,9 +61,15 @@ class AnthropicBackend:
                 system=system,
                 messages=messages,
             )
-            if not resp.content:
-                raise RuntimeError("API returned an empty response")
-            return resp.content[0].text
+            text = "".join(
+                block.text
+                for block in resp.content
+                if getattr(block, "type", "text") == "text"
+                and isinstance(getattr(block, "text", None), str)
+            )
+            if not text:
+                raise RuntimeError("API returned no text content")
+            return text
         except self._anthropic.RateLimitError as e:
             raise BackendRateLimitError(str(e)) from e
         except self._anthropic.APITimeoutError as e:

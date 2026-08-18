@@ -56,11 +56,20 @@ class OpenAIBackend:
             oai_messages.append({"role": m["role"], "content": m["content"]})
 
         try:
-            resp = self.client.chat.completions.create(
+            request = dict(
                 model=self.model,
                 messages=oai_messages,
                 max_tokens=max_tokens or self.max_tokens,
             )
+            # OpenAI-compatible reasoning models (including Ollama cloud
+            # models) may spend the entire completion budget on a private
+            # reasoning field and return an empty assistant message.  Keep the
+            # provider-specific control opt-in so ordinary OpenAI-compatible
+            # servers receive the exact request shape they did before.
+            reasoning_effort = os.environ.get("OPENAI_REASONING_EFFORT", "").strip()
+            if reasoning_effort:
+                request["reasoning_effort"] = reasoning_effort
+            resp = self.client.chat.completions.create(**request)
             choice = resp.choices[0]
             if not choice.message.content:
                 raise RuntimeError("API returned an empty response")

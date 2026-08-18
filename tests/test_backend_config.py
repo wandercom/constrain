@@ -1,7 +1,12 @@
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
+
 import pytest
 
 from constrain.backends import create_backend
+from constrain.backends.anthropic import AnthropicBackend, DEFAULT_MODEL
 from constrain.backends.local_agent import LocalAgentBackend
+from constrain.backends.openai import OpenAIBackend
 
 
 def test_create_backend_uses_env_max_tokens_for_local_agent(monkeypatch):
@@ -29,3 +34,51 @@ def test_local_agent_backend_runs_configured_command():
     )
 
     assert backend.complete("system", [{"role": "user", "content": "hello"}]) == "agent output"
+
+
+def test_anthropic_backend_prefers_wander_billing_key(monkeypatch):
+    monkeypatch.setenv("WANDER_ANTHROPIC_API_KEY", "wander-key")
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "generic-key")
+    monkeypatch.setenv("JMC_ANTHROPIC_API_KEY", "jmc-key")
+
+    with patch("anthropic.Anthropic") as client_cls:
+        backend = AnthropicBackend()
+
+    client_cls.assert_called_once_with(api_key="wander-key")
+    assert backend.model == DEFAULT_MODEL == "claude-sonnet-4-6"
+
+
+def test_anthropic_backend_skips_non_text_blocks():
+    response = SimpleNamespace(
+        content=[
+            SimpleNamespace(type="thinking", thinking="private reasoning"),
+            SimpleNamespace(type="text", text="answer"),
+        ]
+    )
+    client = Mock()
+    client.messages.create.return_value = response
+
+    backend = AnthropicBackend(client=client)
+
+    assert backend.complete("system", [{"role": "user", "content": "hello"}]) == "answer"
+
+
+def test_openai_backend_forwards_opt_in_reasoning_effort(monkeypatch):
+    monkeypatch.setenv("OPENAI_REASONING_EFFORT", "none")
+    client = Mock()
+    client.chat.completions.create.return_value = SimpleNamespace(
+        choices=[SimpleNamespace(message=SimpleNamespace(content="answer"))]
+    )
+
+    backend = OpenAIBackend(client=client, model="qwen3.5:cloud")
+
+    assert backend.complete("system", [{"role": "user", "content": "hello"}]) == "answer"
+    client.chat.completions.create.assert_called_once_with(
+        model="qwen3.5:cloud",
+        messages=[
+            {"role": "system", "content": "system"},
+            {"role": "user", "content": "hello"},
+        ],
+        max_tokens=4096,
+        reasoning_effort="none",
+    )
