@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "constrain"
-version = "0.5.1"
+version = "0.5.2"
 description = "Find the boundary between specification and intent"
 requires-python = ">=3.12"
 dependencies = [

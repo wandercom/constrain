@@ -6,14 +6,26 @@ Constrain is a CLI tool that interviews engineers about their problem and produc
 
 ## Install
 
+Install the released package directly from GitHub Releases:
+
 ```bash
-pip install -e ".[anthropic]"    # Anthropic backend (default)
-pip install -e ".[openai]"       # OpenAI-compatible backend
-pip install -e ".[mcp]"          # MCP server
-pip install -e ".[all]"          # Everything
+python3 -m pip install "constrain[anthropic] @ https://github.com/jmcentire/constrain/releases/download/v0.5.2/constrain-0.5.2-py3-none-any.whl"
 ```
 
-Requires Python 3.12+ and credentials or a logged-in local agent for your chosen backend.
+For a source checkout:
+
+```bash
+git clone https://github.com/jmcentire/constrain.git
+cd constrain
+python3 -m pip install -e ".[all]"
+```
+
+> **Important:** the project named `constrain` on PyPI is an unrelated PNNL
+> package. Do not use a bare `pip install constrain` for this project.
+
+Requires Python 3.12+ and credentials or a logged-in local agent for your
+chosen backend. Replace the `anthropic` extra in the release command with
+`openai`, `mcp`, or `all` as needed.
 
 ## Usage
 

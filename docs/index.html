@@ -132,25 +132,32 @@
   <p>Constrain interviews engineers about their problem and produces five artifacts that feed directly into downstream tools. The prompt gives an AI agent the context to build the right thing. The constraints, trust policy, component map, and schema hints give downstream systems the structured data they need to scaffold contracts, orchestrate circuits, arbitrate trust, and build schemas.</p>
 
   <div class="install">
-    <pre><code>pip install -e ".[anthropic]"    # Anthropic backend (default)
-pip install -e ".[openai]"       # OpenAI-compatible backend
-pip install -e ".[mcp]"          # MCP server
-pip install -e ".[all]"          # Everything</code></pre>
-    <p style="margin-top: 0.75rem;">Requires Python 3.12+ and an API key for your chosen backend.</p>
+    <pre><code># Released package (replace anthropic with openai, mcp, or all as needed)
+python3 -m pip install "constrain[anthropic] @ https://github.com/jmcentire/constrain/releases/download/v0.5.2/constrain-0.5.2-py3-none-any.whl"
+
+# Source checkout
+git clone https://github.com/jmcentire/constrain.git
+cd constrain
+python3 -m pip install -e ".[all]"</code></pre>
+    <p style="margin-top: 0.75rem;"><strong>Important:</strong> the project named <code>constrain</code> on PyPI is an unrelated PNNL package. Do not use a bare <code>pip install constrain</code> for this project.</p>
+    <p style="margin-top: 0.75rem;">Requires Python 3.12+ and credentials or a logged-in local agent for your chosen backend.</p>
   </div>
 
   <h2>Backend selection</h2>
-  <p>Constrain supports Anthropic (default) and any OpenAI-compatible API, including local models.</p>
+  <p>Constrain supports Anthropic (default), OpenAI-compatible APIs, local models, and local agent CLIs.</p>
   <pre><code># Anthropic (default)
-export ANTHROPIC_API_KEY=sk-...
+export WANDER_ANTHROPIC_API_KEY=sk-...
 constrain
 
 # OpenAI
 constrain --backend openai --model gpt-4o
 
 # Local model via OpenAI-compatible API
-CONSTRAIN_BACKEND=openai OPENAI_BASE_URL=http://localhost:11434/v1 constrain --model llama3</code></pre>
-  <p>Environment variables: <code>CONSTRAIN_BACKEND=anthropic|openai</code>, <code>CONSTRAIN_MODEL=&lt;model-name&gt;</code></p>
+CONSTRAIN_BACKEND=openai OPENAI_BASE_URL=http://localhost:11434/v1 constrain --model llama3
+
+# Local agent CLI
+constrain --backend codex --model gpt-5.3-codex --max-tokens 32000</code></pre>
+  <p>Anthropic billing prefers <code>WANDER_ANTHROPIC_API_KEY</code>, then falls back to <code>ANTHROPIC_API_KEY</code> or <code>JMC_ANTHROPIC_API_KEY</code>. Environment variables: <code>CONSTRAIN_BACKEND=anthropic|openai|codex|claude|opencode|cursor</code>, <code>CONSTRAIN_MODEL=&lt;model-name&gt;</code>, and <code>CONSTRAIN_MAX_TOKENS=&lt;count&gt;</code>.</p>
 
   <h2>Three phases</h2>
   <div class="phase-grid">
