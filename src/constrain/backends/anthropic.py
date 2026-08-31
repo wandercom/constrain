@@ -11,7 +11,7 @@ from . import (
     BackendTimeoutError,
 )
 
-DEFAULT_MODEL = "claude-sonnet-4-6"
+DEFAULT_MODEL = "claude-opus-5"
 
 _API_KEY_ENV_VARS = (
     "WANDER_ANTHROPIC_API_KEY",

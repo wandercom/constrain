@@ -913,7 +913,7 @@ def test_invariant_model_constant():
     """Default Anthropic model is a current Claude model."""
     from constrain.backends.anthropic import DEFAULT_MODEL
 
-    assert DEFAULT_MODEL == "claude-sonnet-4-6"
+    assert DEFAULT_MODEL == "claude-opus-5"
 
 
 def test_invariant_phase_order():

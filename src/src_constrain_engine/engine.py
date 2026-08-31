@@ -17,7 +17,15 @@ from .posture import get_revision_prompt, get_system_prompt
 from .session import SessionManager
 from .synthesizer import parse_synthesis_output
 
-MODEL = "claude-sonnet-4-20250514"
+# NOTE: this package is NOT shipped (pyproject packages only `src/constrain`)
+# and nothing under `src/constrain` imports it — the live model default is
+# `constrain.backends.anthropic.DEFAULT_MODEL`. The literal here was
+# `claude-sonnet-4-20250514`, which Anthropic has retired; it is corrected so
+# no live source names a dead model, but this duplicate constant is the real
+# defect. The component and its generated contracts under
+# `contracts/src_constrain_engine/` still assert the retired string and need
+# regenerating or deleting.
+MODEL = "claude-opus-5"
 
 
 class TerminalIO(Protocol):

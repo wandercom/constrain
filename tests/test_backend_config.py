@@ -45,7 +45,7 @@ def test_anthropic_backend_prefers_wander_billing_key(monkeypatch):
         backend = AnthropicBackend()
 
     client_cls.assert_called_once_with(api_key="wander-key")
-    assert backend.model == DEFAULT_MODEL == "claude-sonnet-4-6"
+    assert backend.model == DEFAULT_MODEL == "claude-opus-5"
 
 
 def test_anthropic_backend_skips_non_text_blocks():

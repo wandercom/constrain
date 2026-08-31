@@ -34,7 +34,8 @@ src/constrain/
 
 ## LLM Interaction Pattern
 - Use `anthropic.Anthropic()` client (sync)
-- Model: `claude-sonnet-4-20250514` for all phases
+- Model: `claude-opus-5` for all phases (resolved from `DEFAULT_MODEL` in
+  `backends/anthropic.py`; `claude-sonnet-4-20250514` is retired and must not be reintroduced)
 - System prompt changes per phase; conversation history is cumulative
 - Each LLM response in understand/challenge phases should end with a structured JSON block (```json ... ```) containing:
   - `ready_to_proceed: bool` — whether the phase is complete
