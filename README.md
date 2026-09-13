@@ -9,13 +9,13 @@ Constrain is a CLI tool that interviews engineers about their problem and produc
 Install the released package directly from GitHub Releases:
 
 ```bash
-python3 -m pip install "constrain[anthropic] @ https://github.com/jmcentire/constrain/releases/download/v0.5.2/constrain-0.5.2-py3-none-any.whl"
+python3 -m pip install "constrain[anthropic] @ https://github.com/wandercom/constrain/releases/download/v0.5.2/constrain-0.5.2-py3-none-any.whl"
 ```
 
 For a source checkout:
 
 ```bash
-git clone https://github.com/jmcentire/constrain.git
+git clone https://github.com/wandercom/constrain.git
 cd constrain
 python3 -m pip install -e ".[all]"
 ```
