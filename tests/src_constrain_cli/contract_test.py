@@ -37,8 +37,7 @@ from constrain.models import Phase
 def mock_env(monkeypatch):
     """Fixture to provide clean environment for each test."""
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
-    monkeypatch.delenv("WANDER_ANTHROPIC_API_KEY", raising=False)
-    monkeypatch.delenv("JMC_ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.delenv("ORG_ANTHROPIC_API_KEY", raising=False)
     monkeypatch.delenv("CONSTRAIN_MIN_UNDERSTAND", raising=False)
     monkeypatch.delenv("CONSTRAIN_MAX_UNDERSTAND", raising=False)
     monkeypatch.delenv("CONSTRAIN_MIN_CHALLENGE", raising=False)
@@ -97,11 +96,20 @@ def test_ensure_api_key_happy_path(mock_env):
     ensure_api_key()
 
 
-def test_ensure_api_key_accepts_wander_key(mock_env):
-    """Wander is a valid Anthropic billing key for Constrain."""
-    mock_env.setenv("WANDER_ANTHROPIC_API_KEY", "wander-key")
+def test_ensure_api_key_accepts_configured_key_name(mock_env):
+    """A key under a configured (non-standard) env-var name is accepted."""
+    mock_env.setenv("CONSTRAIN_ANTHROPIC_API_KEY_ENV", "ORG_ANTHROPIC_API_KEY,ANTHROPIC_API_KEY")
+    mock_env.setenv("ORG_ANTHROPIC_API_KEY", "org-key")
 
     ensure_api_key()
+
+
+def test_ensure_api_key_ignores_unconfigured_key_name(mock_env):
+    """Only configured names count; the default is ANTHROPIC_API_KEY alone."""
+    mock_env.setenv("ORG_ANTHROPIC_API_KEY", "org-key")
+
+    with pytest.raises(click.ClickException):
+        ensure_api_key()
 
 
 def test_ensure_api_key_missing(mock_env):

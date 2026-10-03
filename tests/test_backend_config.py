@@ -36,16 +36,52 @@ def test_local_agent_backend_runs_configured_command():
     assert backend.complete("system", [{"role": "user", "content": "hello"}]) == "agent output"
 
 
-def test_anthropic_backend_prefers_wander_billing_key(monkeypatch):
-    monkeypatch.setenv("WANDER_ANTHROPIC_API_KEY", "wander-key")
+def test_anthropic_backend_defaults_to_standard_key(monkeypatch):
     monkeypatch.setenv("ANTHROPIC_API_KEY", "generic-key")
-    monkeypatch.setenv("JMC_ANTHROPIC_API_KEY", "jmc-key")
+    monkeypatch.setenv("ORG_ANTHROPIC_API_KEY", "org-key")
 
     with patch("anthropic.Anthropic") as client_cls:
         backend = AnthropicBackend()
 
-    client_cls.assert_called_once_with(api_key="wander-key")
+    client_cls.assert_called_once_with(api_key="generic-key")
     assert backend.model == DEFAULT_MODEL == "claude-opus-5"
+
+
+def test_anthropic_backend_honors_key_order_env(monkeypatch):
+    monkeypatch.setenv("CONSTRAIN_ANTHROPIC_API_KEY_ENV", "ORG_ANTHROPIC_API_KEY, ANTHROPIC_API_KEY")
+    monkeypatch.setenv("ORG_ANTHROPIC_API_KEY", "org-key")
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "generic-key")
+
+    with patch("anthropic.Anthropic") as client_cls:
+        AnthropicBackend()
+
+    client_cls.assert_called_once_with(api_key="org-key")
+
+
+def test_anthropic_backend_honors_key_order_config_file(monkeypatch, tmp_path):
+    cfg = tmp_path / "constrain" / "config.toml"
+    cfg.parent.mkdir(parents=True)
+    cfg.write_text('anthropic_api_key_env = ["ORG_ANTHROPIC_API_KEY", "ANTHROPIC_API_KEY"]\n')
+    monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
+    monkeypatch.setenv("ORG_ANTHROPIC_API_KEY", "org-key")
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "generic-key")
+
+    with patch("anthropic.Anthropic") as client_cls:
+        AnthropicBackend()
+
+    client_cls.assert_called_once_with(api_key="org-key")
+
+
+def test_malformed_key_config_fails_loudly(monkeypatch, tmp_path):
+    from constrain.keyconfig import KeyConfigError, anthropic_api_key
+
+    cfg = tmp_path / "constrain" / "config.toml"
+    cfg.parent.mkdir(parents=True)
+    cfg.write_text("anthropic_api_key_env = 3\n")
+    monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
+
+    with pytest.raises(KeyConfigError, match="anthropic_api_key_env"):
+        anthropic_api_key()
 
 
 def test_anthropic_backend_skips_non_text_blocks():
