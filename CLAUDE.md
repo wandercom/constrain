@@ -65,4 +65,4 @@ All artifacts cross-validated before writing: component names, authority domains
 
 ## Kindex
 
-Constrain captures discoveries, decisions, and constraint rationale in [Kindex](~/WanderRepos/repos/kindex). Search before adding. Link related concepts.
+Constrain captures discoveries, decisions, and constraint rationale in [Kindex](https://github.com/wandercom/kindex). Search before adding. Link related concepts.

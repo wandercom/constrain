@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 
+from ..keyconfig import KeyConfigError, anthropic_api_key
 from . import (
     BackendAuthError,
     BackendConnectionError,
@@ -13,20 +14,16 @@ from . import (
 
 DEFAULT_MODEL = "claude-opus-5"
 
-_API_KEY_ENV_VARS = (
-    "WANDER_ANTHROPIC_API_KEY",
-    "ANTHROPIC_API_KEY",
-    "JMC_ANTHROPIC_API_KEY",
-)
-
-
 def _anthropic_api_key() -> str | None:
-    """Resolve the Anthropic billing key, preferring the Wander account."""
-    for name in _API_KEY_ENV_VARS:
-        value = os.environ.get(name, "").strip()
-        if value:
-            return value
-    return None
+    """Resolve the Anthropic key using the configured env-var name order.
+
+    A configured order with no key set is an auth failure, never a silent
+    fall-through to the SDK's own ANTHROPIC_API_KEY lookup.
+    """
+    try:
+        return anthropic_api_key()
+    except KeyConfigError as exc:
+        raise BackendAuthError(str(exc)) from exc
 
 
 class AnthropicBackend:

@@ -9,6 +9,11 @@ from pathlib import Path
 import click
 
 from .backends import create_backend
+from .keyconfig import (
+    ANTHROPIC_API_KEY_ENV_OVERRIDE,
+    KeyConfigError,
+    anthropic_api_key_env_vars,
+)
 from .engine import ConversationEngine, EngineConfig
 from .models import Phase, Posture, Session
 from .session import SessionManager
@@ -42,15 +47,16 @@ def ensure_api_key() -> None:
     """Validate that the required API key is set for the active backend."""
     backend_name = os.environ.get("CONSTRAIN_BACKEND", "anthropic")
     if backend_name == "anthropic":
-        key_names = (
-            "WANDER_ANTHROPIC_API_KEY",
-            "ANTHROPIC_API_KEY",
-            "JMC_ANTHROPIC_API_KEY",
-        )
+        try:
+            key_names = anthropic_api_key_env_vars()
+        except KeyConfigError as exc:
+            raise click.ClickException(str(exc)) from exc
         if not any(os.environ.get(name, "").strip() for name in key_names):
             raise click.ClickException(
-                "No Anthropic API key set. Export WANDER_ANTHROPIC_API_KEY "
-                "(preferred), ANTHROPIC_API_KEY, or JMC_ANTHROPIC_API_KEY."
+                "No Anthropic API key set. Export "
+                + " or ".join(key_names)
+                + f" (key-name order is configurable via {ANTHROPIC_API_KEY_ENV_OVERRIDE}"
+                " or ~/.config/constrain/config.toml)."
             )
     elif backend_name == "openai":
         key = os.environ.get("OPENAI_API_KEY", "").strip()

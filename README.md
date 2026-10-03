@@ -53,7 +53,7 @@ constrain export --format ledger   # schema_hints.yaml skeleton for Ledger
 
 ```bash
 # Anthropic (default)
-export WANDER_ANTHROPIC_API_KEY=sk-...
+export ANTHROPIC_API_KEY=sk-...
 constrain
 
 # OpenAI
@@ -78,7 +78,7 @@ Backend credential and command settings:
 
 | Backend | Required/config env vars |
 |---------|--------------------------|
-| `anthropic` | `WANDER_ANTHROPIC_API_KEY` (preferred), `ANTHROPIC_API_KEY`, or `JMC_ANTHROPIC_API_KEY`; optional `CONSTRAIN_MODEL`, `CONSTRAIN_MAX_TOKENS` |
+| `anthropic` | `ANTHROPIC_API_KEY` by default; ordered key-name list configurable via `CONSTRAIN_ANTHROPIC_API_KEY_ENV` (comma-separated) or `~/.config/constrain/config.toml` (see `config.example.toml`); optional `CONSTRAIN_MODEL`, `CONSTRAIN_MAX_TOKENS` |
 | `openai` | `OPENAI_API_KEY` or `OPENAI_BASE_URL`, optional `CONSTRAIN_MODEL`, `CONSTRAIN_MAX_TOKENS` |
 | `codex` | logged-in `codex` CLI, optional `CONSTRAIN_CODEX_COMMAND`, `CONSTRAIN_CODEX_MODEL`, `CONSTRAIN_CODEX_ARGS` |
 | `claude` | logged-in `claude` CLI or its own auth env, optional `CONSTRAIN_CLAUDE_COMMAND`, `CONSTRAIN_CLAUDE_MODEL`, `CONSTRAIN_CLAUDE_ARGS` |

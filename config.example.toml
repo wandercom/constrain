@@ -1,0 +1,8 @@
+# Example Constrain user config. Copy to ~/.config/constrain/config.toml
+# (or $XDG_CONFIG_HOME/constrain/config.toml). Never commit the real file.
+#
+# Ordered list of environment-variable NAMES that may hold the Anthropic key.
+# The first one that is set and non-empty wins. Values never go in this file.
+# Default when unset: ["ANTHROPIC_API_KEY"].
+# CONSTRAIN_ANTHROPIC_API_KEY_ENV (comma-separated) overrides this file.
+anthropic_api_key_env = ["MY_ORG_ANTHROPIC_API_KEY", "ANTHROPIC_API_KEY"]
