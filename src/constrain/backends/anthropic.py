@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 
-from ..keyconfig import anthropic_api_key
+from ..keyconfig import KeyConfigError, anthropic_api_key
 from . import (
     BackendAuthError,
     BackendConnectionError,
@@ -15,8 +15,15 @@ from . import (
 DEFAULT_MODEL = "claude-opus-5"
 
 def _anthropic_api_key() -> str | None:
-    """Resolve the Anthropic key using the configured env-var name order."""
-    return anthropic_api_key()
+    """Resolve the Anthropic key using the configured env-var name order.
+
+    A configured order with no key set is an auth failure, never a silent
+    fall-through to the SDK's own ANTHROPIC_API_KEY lookup.
+    """
+    try:
+        return anthropic_api_key()
+    except KeyConfigError as exc:
+        raise BackendAuthError(str(exc)) from exc
 
 
 class AnthropicBackend:
