@@ -53,6 +53,8 @@ boundary_register entries record identifiers that cross a boundary (format bound
               "records": [{"kind": "file", "path": "<project-relative path>", "line": <1-based line>}
                           | {"kind": "observation", "path": "<project-relative file holding captured output>", "command": "<exact command/query>", "observed_at": "<RFC3339>"}]}]}
 Rules: relation "equal" needs a defines/grants side and a consumes/presents side; relation "absent" has exactly one presents side (the subject) and one or more denies sides whose records must not contain it.
+A denies side's value names the policy or resource that must exclude the subject (e.g. the IAM policy or grant list of the isolated service) — it is NOT the subject literal and never a placeholder; its record is a capture of that policy/resource, which must not contain the subject.
+An entry with only one side known is recorded as is (UNVERIFIED); ask for the other party's exact literal and record rather than inventing it.
 NEVER invent a value: use only literals the engineer stated or a document contains. NEVER supply sha256 — code computes digests and confirms lines.
 If the engineer cannot say where a value is recorded, emit the side with "records": [] (UNVERIFIED) and add an open_questions item asking for the record. Re-send an entry with the same id to update it.
 
@@ -339,7 +341,7 @@ Categories:
 - history (list): What's been tried, what's gone wrong before
 - success_shape (list): Qualities of a good solution
 - acceptance_criteria (list): Concrete, testable conditions for "done"
-- boundary_register (list): identifiers that cross a boundary and appear LITERALLY in this document — role and grant names, table/column names, metric types and labels, log field keys, env vars, service names, endpoints, credentials/audiences/principals, topics, queues, buckets. Use the entry shape below. Copy each value byte-for-byte from the document; never normalize or invent one. For each side, give "records": [{{"kind": "file", "line": <line number in this document>}}] — code confirms the line and computes the digest; do not supply sha256 or path. Only include sides the document actually states; leave the other side out rather than assuming it.
+- boundary_register (list): identifiers that cross a boundary and appear LITERALLY in this document — role and grant names, table/column names, metric types and labels, log field keys, env vars, service names, endpoints, credentials/audiences/principals, topics, queues, buckets. Use the entry shape below. Copy each value byte-for-byte from the document; never normalize or invent one. For each side, give "records": [{{"kind": "file", "line": <line number in this document>}}] — code confirms the line and computes the digest; do not supply sha256 or path. Only include sides the document actually states; leave the other side out rather than assuming it (a one-sided entry is kept as UNVERIFIED until the other party is recorded).
   Entry shape: {{"id": "<slug>", "kind": "<name|endpoint|credential|audience|principal|grant|role|table|column|field|metric|label|env|config-key|topic|queue|bucket|secret|service|header|claim|enum|other>", "relation": "equal", "description": "<why the sides must agree>", "sides": [{{"party": "<component or external:<system>>", "role": "<defines|grants|consumes|presents|denies>", "value": "<exact literal>", "records": [...]}}]}}
 
 Current understanding (avoid duplicating what's already known):

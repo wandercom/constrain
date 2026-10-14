@@ -39,6 +39,7 @@ from .models import (
     BoundarySide,
     FileRecord,
     ObservationRecord,
+    _RFC3339_RE,
     check_record_path,
 )
 
@@ -52,8 +53,13 @@ NON_BLOCKING_CODES = frozenset({"unverified"})
 
 _TOKEN_CHARS = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-")
 _SEPARATORS_RE = re.compile(r"[-_. ]")
-_PLACEHOLDER_WORDS = ("todo", "tbd", "tbc", "fixme", "unknown", "assumed", "placeholder", "changeme")
-_ANGLE_PLACEHOLDER_RE = re.compile(r"<[A-Za-z0-9_. -]*>")
+# Shared with the factory and Pact (boundary-register/1): a placeholder is a
+# whole value matching one of these words (case-insensitive), or any value
+# containing an angle-bracket placeholder. "unknown", "none", "null", "n/a"
+# are real enum members, not placeholders.
+_PLACEHOLDER_RE = re.compile(r"(?:todo|tbd|tbc|assumed|placeholder|changeme|x{3,}|\?+)", re.IGNORECASE)
+_ANGLE_PLACEHOLDER_RE = re.compile(r"<[^<>\s]+>")
+_JOINER_CHARS = "./"
 
 
 @dataclass(frozen=True)
@@ -92,13 +98,30 @@ def sha256_bytes(data: bytes) -> str:
 def contains_token(haystack: str, value: str) -> bool:
     """True if *value* occurs in *haystack* as a whole token.
 
-    If the value starts (ends) with an identifier character [A-Za-z0-9_-], the
-    character before (after) the occurrence must not be one, or be the start
-    (end) of the text. So ``mea-auth`` does not match inside
-    ``mea-auth-runtime``, while ``level`` matches in ``"level":``.
+    Shared rule (boundary-register/1, identical in the factory and Pact).
+    Joiners are the '.' and '/' characters that appear in the value. At each
+    edge where the value's edge character is a token char [A-Za-z0-9_-], the
+    occurrence is rejected if the adjacent haystack char is a token char, or
+    if it is a joiner and the char beyond it is a token char. So ``svc-auth``
+    does not match inside ``svc-auth-runtime``, ``foo.bar`` does not match
+    inside ``foo.bar.baz``, ``/health`` does not match inside
+    ``/health/ready``, while ``level`` matches in ``"level":``.
     """
     if not value:
         return False
+    joiners = {c for c in value if c in _JOINER_CHARS}
+    n = len(haystack)
+
+    def edge_ok(adjacent: int, beyond: int) -> bool:
+        if adjacent < 0 or adjacent >= n:
+            return True
+        c = haystack[adjacent]
+        if c in _TOKEN_CHARS:
+            return False
+        if c in joiners and 0 <= beyond < n and haystack[beyond] in _TOKEN_CHARS:
+            return False
+        return True
+
     check_start = value[0] in _TOKEN_CHARS
     check_end = value[-1] in _TOKEN_CHARS
     start = 0
@@ -107,8 +130,8 @@ def contains_token(haystack: str, value: str) -> bool:
         if i < 0:
             return False
         end = i + len(value)
-        ok_start = not check_start or i == 0 or haystack[i - 1] not in _TOKEN_CHARS
-        ok_end = not check_end or end == len(haystack) or haystack[end] not in _TOKEN_CHARS
+        ok_start = not check_start or edge_ok(i - 1, i - 2)
+        ok_end = not check_end or edge_ok(end, end + 1)
         if ok_start and ok_end:
             return True
         start = i + 1
@@ -126,13 +149,9 @@ def _split_lines(text: str) -> list[str]:
 
 def is_placeholder(value: str) -> bool:
     """True for values that stand in for a literal nobody looked up."""
-    v = value.strip()
-    if not v:
+    if not value.strip():
         return True
-    if "???" in v or _ANGLE_PLACEHOLDER_RE.search(v):
-        return True
-    lowered = v.lower()
-    return any(contains_token(lowered, word) for word in _PLACEHOLDER_WORDS)
+    return bool(_PLACEHOLDER_RE.fullmatch(value) or _ANGLE_PLACEHOLDER_RE.search(value))
 
 
 def normalize_near_miss(value: str) -> str:
@@ -153,12 +172,8 @@ def resolve_record_path(project_root: Path, path: str) -> Path:
     return target
 
 
-def _side_label(side: BoundarySide | dict, index: int) -> str:
-    if isinstance(side, BoundarySide):
-        return f"sides[{index}] {side.party}/{side.role}"
-    party = side.get("party", "?") if isinstance(side, dict) else "?"
-    role = side.get("role", "?") if isinstance(side, dict) else "?"
-    return f"sides[{index}] {party}/{role}"
+def _side_label(side: BoundarySide, index: int) -> str:
+    return f"sides[{index}] {side.party}/{side.role}"
 
 
 # ── verification ────────────────────────────────────────────
@@ -254,10 +269,12 @@ def _verify_entry(entry: BoundaryEntry, project_root: Path) -> list[Finding]:
                 err(label, "relation-shape", "role 'denies' is only valid for relation 'absent'")
         definers = [i for i, s in enumerate(entry.sides) if s.role in ("defines", "grants")]
         users = [i for i, s in enumerate(entry.sides) if s.role in ("consumes", "presents")]
+        # One-sided entries (common from priming) are UNVERIFIED, not
+        # malformed: written and flagged until the other party is recorded.
         if not definers:
-            err(None, "relation-shape", "relation 'equal' needs at least one side with role defines or grants")
+            err(None, "unverified", "UNVERIFIED: one-sided — no defines/grants side records the other party's literal")
         if not users:
-            err(None, "relation-shape", "relation 'equal' needs at least one side with role consumes or presents")
+            err(None, "unverified", "UNVERIFIED: one-sided — no consumes/presents side records the other party's literal")
         ref_i = definers[0] if definers else 0
         ref = entry.sides[ref_i]
         for i, side in enumerate(entry.sides):
@@ -290,7 +307,7 @@ def _verify_entry(entry: BoundaryEntry, project_root: Path) -> list[Finding]:
         if len(presenters) != 1:
             err(None, "relation-shape", f"relation 'absent' needs exactly one presents side (subject), found {len(presenters)}")
         if not deniers:
-            err(None, "relation-shape", "relation 'absent' needs at least one denies side")
+            err(None, "unverified", "UNVERIFIED: one-sided — no denies side records the policy/resource that excludes the subject")
         if presenters:
             subject = entry.sides[presenters[0]]
             for rec in subject.records:
@@ -439,6 +456,7 @@ def anchor_record(
     *,
     default_path: str | None = None,
     expect_value: bool = True,
+    keep_observed_at: bool = False,
 ) -> tuple[FileRecord | ObservationRecord | None, str | None]:
     """Turn a cited location into a record with a code-computed digest.
 
@@ -446,6 +464,9 @@ def anchor_record(
     not check out. Any sha256 the caller supplied is ignored. With
     *expect_value* (every role except ``denies``) the literal must occur as a
     token: on the cited line if it does, else on the first line where it does.
+    An observation's ``observed_at`` is stamped here (UTC, now) — never taken
+    from the model — unless *keep_observed_at* (re-anchoring a register file
+    Constrain itself wrote) and the existing value is valid RFC3339.
     """
     if not isinstance(raw, dict):
         return None, "record is not a mapping"
@@ -475,9 +496,10 @@ def anchor_record(
             return None, f"observation {rel!r} does not state the exact command that produced it"
         if expect_value and not contains_token(text, value):
             return None, f"{value!r} does not occur in observation {rel!r}"
-        observed_at = raw.get("observed_at")
-        if not isinstance(observed_at, str):
-            observed_at = datetime.fromtimestamp(target.stat().st_mtime, tz=timezone.utc).isoformat()
+        observed_at = _utc_now()
+        prior = raw.get("observed_at")
+        if keep_observed_at and isinstance(prior, str) and _RFC3339_RE.match(prior):
+            observed_at = prior
         try:
             return ObservationRecord(
                 kind="observation", path=rel, sha256=digest, command=command, observed_at=observed_at
@@ -502,11 +524,16 @@ def anchor_record(
     return FileRecord(kind="file", path=rel, line=line, sha256=digest), None
 
 
+def _utc_now() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
 def anchor_boundary_update(
     raw_entries: object,
     project_root: str | Path,
     *,
     default_path: str | None = None,
+    keep_observed_at: bool = False,
 ) -> tuple[list, list[str]]:
     """Replace model-proposed records with code-computed ones.
 
@@ -546,6 +573,7 @@ def anchor_boundary_update(
                         raw, value, root,
                         default_path=default_path,
                         expect_value=side.get("role") != "denies",
+                        keep_observed_at=keep_observed_at,
                     )
                     if rec is not None:
                         anchored.append(rec.model_dump(mode="json"))
@@ -562,8 +590,27 @@ def anchor_boundary_update(
     return out, questions
 
 
+def question_key(question: str) -> str:
+    """Dedup key: "Boundary <id>: <party> (<role>)" for boundary questions, else the text."""
+    if question.startswith("Boundary ") and ") " in question:
+        return question.split(") ", 1)[0] + ")"
+    return question
+
+
+def _missing_counterparts(entry: BoundaryEntry) -> list[str]:
+    roles = {s.role for s in entry.sides}
+    if entry.relation == "equal":
+        missing = []
+        if not roles & {"defines", "grants"}:
+            missing.append("defines/grants")
+        if not roles & {"consumes", "presents"}:
+            missing.append("consumes/presents")
+        return missing
+    return [] if "denies" in roles else ["denies"]
+
+
 def unverified_questions(entries: Iterable[BoundaryEntry]) -> list[str]:
-    """One deterministic open question per side that has no record."""
+    """Deterministic open questions: one per unrecorded side, one per missing counterpart."""
     qs = []
     for entry in entries:
         for side in entry.sides:
@@ -572,4 +619,18 @@ def unverified_questions(entries: Iterable[BoundaryEntry]) -> list[str]:
                     f"Boundary {entry.id}: {side.party} ({side.role}) uses {json.dumps(side.value)} — "
                     "UNVERIFIED: no record cited. Which file line or captured observation shows it?"
                 )
+        for roles in _missing_counterparts(entry):
+            what = (
+                "the policy/resource that must exclude the subject, and the record (e.g. a captured policy dump) showing it does"
+                if roles == "denies"
+                else "the other party's exact literal, and the file line or captured observation that shows it"
+            )
+            qs.append(
+                f"Boundary {entry.id}: counterpart ({roles}) — UNVERIFIED: one-sided entry. "
+                f"Which party is on the {roles} side, what is {what}?"
+            )
     return qs
+
+
+def unresolved_question_keys(entries: Iterable[BoundaryEntry]) -> set[str]:
+    return {question_key(q) for q in unverified_questions(entries)}

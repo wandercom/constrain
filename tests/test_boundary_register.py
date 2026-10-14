@@ -107,6 +107,21 @@ def _grant_entry(root, consumer_value="gateway_ro", consumer_line=2):
 
 
 class TestBR001TokenMatch:
+    @pytest.mark.parametrize("haystack,value,expected", [
+        ("metric foo.bar.baz", "foo.bar", False),
+        ("a.foo.bar", "foo.bar", False),
+        ("type=foo.bar.", "foo.bar", True),
+        ("GET /health/ready", "/health", False),
+        ("GET /health HTTP/1.1", "/health", True),
+        ("entry.severity = level", "severity", True),
+        ('"level": "INFO"', "level", True),
+        ("svc-auth-runtime", "svc-auth", False),
+        ("serviceAccount:svc-auth@p.iam", "svc-auth", True),
+    ])
+    def test_shared_vectors(self, haystack, value, expected):
+        """Parity vectors shared with the factory and Pact (boundary-register/1)."""
+        assert contains_token(haystack, value) is expected
+
     def test_prefix_does_not_match_longer_identifier(self):
         assert not contains_token("audience: mea-auth-runtime", "mea-auth")
 
@@ -325,22 +340,58 @@ class TestBR006Absent:
         entry["sides"].append(dict(entry["sides"][0], party="web2"))
         assert "relation-shape" in _codes(validate_boundary_register(_register(entry), isolation_project))
 
-    def test_absent_needs_a_denier(self, isolation_project):
+    def test_absent_without_denier_is_unverified_not_blocking(self, isolation_project):
         entry = _absent_entry(isolation_project)
         entry["sides"] = entry["sides"][:1]
-        assert "relation-shape" in _codes(validate_boundary_register(_register(entry), isolation_project))
+        findings = validate_boundary_register(_register(entry), isolation_project)
+        assert _codes(findings) == ["unverified"]
+        assert blocking_findings(findings) == []
 
 
 class TestBR006EqualShape:
-    def test_equal_needs_definer(self, grant_project):
+    """One-sided entries (typical from priming) are UNVERIFIED, not blocking."""
+
+    def test_equal_without_definer_is_unverified(self, grant_project):
         entry = _grant_entry(grant_project)
         entry["sides"][0]["role"] = "consumes"
-        assert "relation-shape" in _codes(validate_boundary_register(_register(entry), grant_project))
+        findings = validate_boundary_register(_register(entry), grant_project)
+        assert _codes(findings) == ["unverified"]
+        assert "one-sided" in findings[0].message
+        assert blocking_findings(findings) == []
 
-    def test_equal_needs_user(self, grant_project):
+    def test_equal_without_user_is_unverified(self, grant_project):
         entry = _grant_entry(grant_project)
         entry["sides"][1]["role"] = "defines"
-        assert "relation-shape" in _codes(validate_boundary_register(_register(entry), grant_project))
+        findings = validate_boundary_register(_register(entry), grant_project)
+        assert _codes(findings) == ["unverified"]
+        assert blocking_findings(findings) == []
+
+    def test_single_side_entry_is_unverified(self, grant_project):
+        entry = _grant_entry(grant_project)
+        entry["sides"] = entry["sides"][1:]
+        findings = validate_boundary_register(_register(entry), grant_project)
+        assert _codes(findings) == ["unverified"]
+
+    def test_denies_in_equal_still_blocks(self, grant_project):
+        entry = _grant_entry(grant_project)
+        entry["sides"].append(dict(entry["sides"][0], party="other", role="denies"))
+        findings = validate_boundary_register(_register(entry), grant_project)
+        assert "relation-shape" in [f.code for f in blocking_findings(findings)]
+
+    def test_one_sided_primed_entry_synthesizes_and_asks_for_counterpart(self, grant_project):
+        session = Session(posture=Posture.critic, phase=Phase.synthesize)
+        engine = ConversationEngine(session, _SessionManager(), backend=_Backend(), io=_IO(),
+                                    project_root=grant_project)
+        engine._apply_model_update({"boundary_register": [_entry("gw-role", [
+            _side("gateway", "consumes", "gateway_ro",
+                  [{"kind": "file", "path": "gateway/config.yaml", "line": 2}]),
+        ])]})
+        assert any(q.startswith("Boundary gw-role: counterpart (defines/grants)")
+                   for q in session.problem_model.open_questions)
+        engine._run_synthesis()
+        assert session.phase is Phase.complete
+        data = load_boundary_register_text(session.boundary_register_yaml)
+        assert len(data["entries"][0]["sides"]) == 1
 
 
 # ============================================================================
@@ -349,12 +400,15 @@ class TestBR006EqualShape:
 
 
 class TestBR007Placeholder:
-    @pytest.mark.parametrize("value", ["TODO", "TBD", "<project-id>", "projects/<project>/topics/x",
-                                       "???", "unknown", "assumed", "TODO: ask infra", "Assumed"])
+    @pytest.mark.parametrize("value", ["TODO", "todo", "TBD", "tbc", "Assumed", "placeholder", "CHANGEME",
+                                       "xxx", "XXXXX", "?", "???", "<project-id>",
+                                       "projects/<project>/topics/x", "Name <a@b.com>"])
     def test_placeholder_values(self, value):
         assert is_placeholder(value)
 
-    @pytest.mark.parametrize("value", ["gateway_ro", "unknown_count", "cloud_run_revision", "Name <a@b.com>"])
+    @pytest.mark.parametrize("value", ["gateway_ro", "unknown", "none", "null", "n/a", "UNKNOWN",
+                                       "todo_items", "tbd-queue", "xx", "cloud_run_revision",
+                                       "a < b > c"])
     def test_real_values(self, value):
         assert not is_placeholder(value)
 
@@ -533,6 +587,26 @@ class TestBR011Anchoring:
         rec, _ = anchor_record({"kind": "file", "path": str(grant_project / "db/grants.sql")},
                                "gateway_ro", grant_project)
         assert rec.path == "db/grants.sql"
+
+    def test_observed_at_stamped_by_code_not_model(self, grant_project):
+        from datetime import datetime, timezone
+        before = datetime.now(timezone.utc).replace(microsecond=0)
+        for model_value in ("yesterday-ish", "1999-01-01T00:00:00Z", None):
+            raw = {"kind": "observation", "path": "db/grants.sql", "command": "psql -c '\\du'"}
+            if model_value is not None:
+                raw["observed_at"] = model_value
+            rec, reason = anchor_record(raw, "gateway_ro", grant_project)
+            assert reason is None, reason
+            stamped = datetime.strptime(rec.observed_at, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+            assert stamped >= before
+            assert rec.sha256 == _sha(grant_project / "db/grants.sql")
+
+    def test_prior_register_keeps_recorded_observed_at(self, grant_project):
+        rec, _ = anchor_record(
+            {"kind": "observation", "path": "db/grants.sql", "command": "psql", "observed_at": "2026-01-02T03:04:05Z"},
+            "gateway_ro", grant_project, keep_observed_at=True,
+        )
+        assert rec.observed_at == "2026-01-02T03:04:05Z"
 
     def test_observation_requires_command(self, grant_project):
         rec, reason = anchor_record({"kind": "observation", "path": "db/grants.sql"}, "gateway_ro", grant_project)
@@ -749,6 +823,10 @@ class TestBR014Prompts:
         assert "what exact literal does each side use, and where is it recorded?" in prompt.lower()
         assert '"records": [] (UNVERIFIED)' in prompt
 
+    def test_prompt_states_what_a_denies_value_is(self):
+        assert "A denies side's value names the policy or resource that must exclude the subject" in _JSON_INSTRUCTION
+        assert "NOT the subject literal and never a placeholder" in _JSON_INSTRUCTION
+
     def test_json_instruction_documents_register(self):
         assert "boundary_register" in _JSON_INSTRUCTION
         assert "NEVER invent a value" in _JSON_INSTRUCTION
@@ -892,7 +970,8 @@ class TestBR016OpenQuestions:
         ])
         engine._apply_model_update({"boundary_register": [bad_cite]})
         engine._apply_model_update({"boundary_register": [bad_cite]})
-        qs = [q for q in session.problem_model.open_questions if q.startswith("Boundary gw-role")]
+        side_key = "Boundary gw-role: gateway (consumes)"
+        qs = [q for q in session.problem_model.open_questions if q.startswith(side_key)]
         assert len(qs) == 1
 
         good = _entry("gw-role", [
@@ -900,4 +979,46 @@ class TestBR016OpenQuestions:
                   [{"kind": "file", "path": "gateway/config.yaml", "line": 2}]),
         ])
         engine._apply_model_update({"boundary_register": [good]})
-        assert not [q for q in session.problem_model.open_questions if q.startswith("Boundary gw-role")]
+        qs = session.problem_model.open_questions
+        assert not [q for q in qs if q.startswith(side_key)]
+        # Still one-sided: the counterpart question remains until it is recorded.
+        assert [q for q in qs if q.startswith("Boundary gw-role: counterpart")]
+
+    def test_non_str_open_questions_coerced(self, grant_project):
+        session = Session(posture=Posture.critic, phase=Phase.challenge)
+        engine = ConversationEngine(session, _SessionManager(), backend=_Backend(), io=_IO(),
+                                    project_root=grant_project)
+        engine._apply_model_update({"open_questions": [{"question": "Who owns the role?"}, {"x": 1}, 7]})
+        engine._apply_model_update({"boundary_register": [_entry("r", [_side("gw", "consumes", "gateway_ro")])]})
+        qs = session.problem_model.open_questions
+        assert all(isinstance(q, str) for q in qs)
+        assert "Who owns the role?" in qs and '{"x": 1}' in qs and "7" in qs
+
+    def test_distinct_plain_questions_all_kept(self, tmp_path_factory):
+        root = tmp_path_factory.mktemp("root")
+        outside = tmp_path_factory.mktemp("outside") / "doc.md"
+        outside.write_text("role gateway_ro\n")
+        session = Session(posture=Posture.critic)
+        session.problem_model.open_questions = ["Who is on call?"]
+        update = {"boundary_register": [_entry("r", [_side("gw", "consumes", "gateway_ro")])]}
+        engine = ConversationEngine(session, _SessionManager(), backend=_Backend([_json_block(update)]),
+                                    io=_IO(), project_root=root)
+        engine.prime_with_document(outside)
+        qs = session.problem_model.open_questions
+        assert "Who is on call?" in qs
+        assert any("is not a file in the project root" in q for q in qs)
+
+    def test_auto_prime_records_archive_source_not_temp_path(self, tmp_path):
+        import tempfile
+        from constrain import cli as cli_mod
+        archive = tmp_path / ".constrain" / "archive" / "billing"
+        _write(archive, "prompt.md", "# System: billing\n\nThe gateway connects as gateway_ro.\n")
+        update = {"boundary_register": [_entry("r", [_side("gw", "consumes", "gateway_ro")])]}
+        session = Session(posture=Posture.critic)
+        engine = ConversationEngine(session, _SessionManager(), backend=_Backend([_json_block(update)]),
+                                    io=_IO(), project_root=tmp_path)
+        with patch.object(cli_mod.kindex, "is_available", return_value=False):
+            cli_mod._auto_prime_previous(engine, tmp_path)
+        qs = session.problem_model.open_questions
+        assert not any(tempfile.gettempdir() in q or "prior_" in q for q in qs)
+        assert any(".constrain/archive/billing" in q for q in qs)

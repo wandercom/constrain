@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import enum
+import json
 import re
 from datetime import datetime, timezone
 from pathlib import PurePosixPath, PureWindowsPath
@@ -227,6 +228,20 @@ def _merge_sides(old: BoundaryEntry, new: BoundaryEntry) -> BoundaryEntry:
     return new.model_copy(update={"sides": sides})
 
 
+def _question_text(item: object) -> str:
+    """Coerce an LLM-proposed open question to text (open_questions is list[str])."""
+    if isinstance(item, str):
+        return item.strip()
+    if isinstance(item, dict):
+        for k in ("question", "text", "description"):
+            if isinstance(item.get(k), str) and item[k].strip():
+                return item[k].strip()
+        return json.dumps(item, sort_keys=True, default=str)
+    if item is None:
+        return ""
+    return str(item)
+
+
 class ProblemModel(BaseModel):
     system_description: str = ""
     stakeholders: list[str] = Field(default_factory=list)
@@ -256,6 +271,12 @@ class ProblemModel(BaseModel):
                 for reason in self._apply_boundary_update(value):
                     if reason not in self.open_questions:
                         self.open_questions.append(reason)
+                continue
+            if key == "open_questions":
+                for item in value if isinstance(value, list) else [value]:
+                    q = _question_text(item)
+                    if q and q not in self.open_questions:
+                        self.open_questions.append(q)
                 continue
             current = getattr(self, key)
             if isinstance(current, str):

@@ -260,7 +260,12 @@ def _auto_prime_previous(engine: ConversationEngine, cwd: Path) -> None:
         f.write(context)
         tmp_path = Path(f.name)
     try:
-        result = engine.prime_with_document(tmp_path)
+        sources = [f".constrain/archive/{slug}"] if previous else []
+        if any(p.startswith("=== Kindex") for p in parts):
+            sources.insert(0, "kindex graph context")
+        result = engine.prime_with_document(
+            tmp_path, source_label="Prior context (" + ", ".join(sources) + ")"
+        )
         click.echo(
             f"  Primed with {result['extracted_count']} items from prior context."
         )

@@ -23,7 +23,9 @@ from .boundary import (
     blocking_findings,
     errors as boundary_errors,
     load_boundary_register_text,
+    question_key,
     render_boundary_register,
+    unresolved_question_keys,
     unverified_questions,
     validate_boundary_register,
 )
@@ -112,9 +114,11 @@ class ConversationEngine:
 
     # ── document priming ───────────────────────────────────
 
-    def prime_with_document(self, path: Path) -> dict:
+    def prime_with_document(self, path: Path, source_label: str | None = None) -> dict:
         """Ingest a document and extract problem model information.
 
+        *source_label* describes the document's real origin when *path* is a
+        scratch file (used in open questions instead of the temp path).
         Returns a dict with keys: 'extracted_count', 'summary'.
         """
         text = path.read_text(encoding="utf-8", errors="replace")
@@ -133,7 +137,7 @@ class ConversationEngine:
         display_text, model_update, _ = self._parse_response(raw)
 
         if model_update:
-            self._apply_model_update(model_update, primed_path=path)
+            self._apply_model_update(model_update, primed_path=path, source_label=source_label)
             self.session.touch()
             self.session_mgr.save(self.session)
 
@@ -169,7 +173,9 @@ class ConversationEngine:
         if not isinstance(entries, list) or not entries:
             return 0
         before = len(self.session.problem_model.boundary_register)
-        self._apply_model_update({"boundary_register": entries})
+        # Records come from a register Constrain wrote, so their observed_at
+        # is kept; lines and digests are still recomputed against today's files.
+        self._apply_model_update({"boundary_register": entries}, keep_observed_at=True)
         self.session.touch()
         self.session_mgr.save(self.session)
         return len(self.session.problem_model.boundary_register) - before
@@ -386,8 +392,19 @@ class ConversationEngine:
 
     # ── boundary register ─────────────────────────────────
 
-    def _apply_model_update(self, update: dict, primed_path: Path | None = None) -> None:
-        """Apply an LLM update; boundary records are anchored by code first."""
+    def _apply_model_update(
+        self,
+        update: dict,
+        primed_path: Path | None = None,
+        source_label: str | None = None,
+        keep_observed_at: bool = False,
+    ) -> None:
+        """Apply an LLM update; boundary records are anchored by code first.
+
+        *source_label* names where a primed document really came from (e.g.
+        the archive of a previous session) when *primed_path* is a scratch
+        file, so open questions never point at a temp path.
+        """
         pm = self.session.problem_model
         questions: list[str] = []
         if "boundary_register" in update:
@@ -399,12 +416,14 @@ class ConversationEngine:
                         .relative_to(self.project_root.resolve()).as_posix()
                     )
                 except ValueError:
+                    where = source_label or f"Primed document {primed_path}"
                     questions.append(
-                        f"Primed document {primed_path} is outside the project root; "
-                        "identifiers taken from it are UNVERIFIED until a project file records them."
+                        f"{where} is not a file in the project root; identifiers taken "
+                        "from it are UNVERIFIED until a project file records them."
                     )
             anchored, notes = anchor_boundary_update(
-                update["boundary_register"], self.project_root, default_path=default_path
+                update["boundary_register"], self.project_root,
+                default_path=default_path, keep_observed_at=keep_observed_at,
             )
             questions.extend(notes)
             update = {**update, "boundary_register": anchored}
@@ -415,22 +434,21 @@ class ConversationEngine:
                 self.io.display(f"  {q}")
         questions.extend(unverified_questions(pm.boundary_register))
 
-        # One open question per unverified side; drop questions for sides
-        # that now have a record. Keys look like "Boundary <id>: <party> (<role>)".
-        def key(q: str) -> str | None:
-            return q.split(") ", 1)[0] + ")" if q.startswith("Boundary ") else None
+        # Boundary questions ("Boundary <id>: <party> (<role>) ...") are kept
+        # only while that side/counterpart is still unresolved, one per key.
+        # Plain questions are deduplicated by their full text.
+        unresolved = unresolved_question_keys(pm.boundary_register)
 
-        verified = {
-            f"Boundary {e.id}: {s.party} ({s.role})"
-            for e in pm.boundary_register for s in e.sides if s.records
-        }
-        pm.open_questions[:] = [q for q in pm.open_questions if key(q) not in verified]
+        def keep(q: str) -> bool:
+            return not q.startswith("Boundary ") or question_key(q) in unresolved
+
+        pm.open_questions[:] = [q for q in pm.open_questions if keep(q)]
+        seen = {question_key(q) for q in pm.open_questions}
         for q in questions:
-            k = key(q)
-            if k in verified:
-                continue
-            if not any(key(existing) == k for existing in pm.open_questions):
+            k = question_key(q)
+            if keep(q) and k not in seen:
                 pm.open_questions.append(q)
+                seen.add(k)
 
     def _boundary_findings(self):
         return validate_boundary_register(
