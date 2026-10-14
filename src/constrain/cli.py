@@ -40,6 +40,10 @@ class SafeGroup(click.Group):
     def invoke(self, ctx: click.Context) -> None:
         try:
             super().invoke(ctx)
+        except click.exceptions.Exit:
+            # Click's normal control flow (--help, --version, ctx.exit(n)):
+            # not an error, so let click finish it with its own exit code.
+            raise
         except click.ClickException:
             raise
         except click.Abort:

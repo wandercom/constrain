@@ -11,7 +11,7 @@ constrain --backend openai         # use OpenAI backend
 constrain --model <model>          # override model
 constrain-mcp                      # start MCP server
 constrain boundary verify          # verify boundary_register.yaml (CI, no LLM)
-python3 -m pytest tests/ -v        # run all tests (525)
+python3 -m pytest tests/ -v        # run all tests (530)
 ```
 
 ## Architecture
@@ -70,7 +70,7 @@ All artifacts cross-validated before writing: component names, authority domains
 - Min/max round limits per phase (configurable via CLI and env)
 - Backend selection: `CONSTRAIN_BACKEND` env or `--backend` flag
 - Model override: `CONSTRAIN_MODEL` env or `--model` flag
-- Tests: 525 total (smoke + contract + integration), pytest
+- Tests: 530 total (smoke + contract + integration), pytest
 - MCP server: `claude mcp add --scope user --transport stdio constrain -- constrain-mcp`
 
 ## Kindex
