@@ -9,7 +9,7 @@ Constrain is a CLI tool that interviews engineers about their problem and produc
 Install the released package directly from GitHub Releases:
 
 ```bash
-python3 -m pip install "constrain[anthropic] @ https://github.com/wandercom/constrain/releases/download/v0.5.2/constrain-0.5.2-py3-none-any.whl"
+python3 -m pip install "constrain[anthropic] @ https://github.com/wandercom/constrain/releases/download/v0.6.0/constrain-0.6.0-py3-none-any.whl"
 ```
 
 For a source checkout:
@@ -35,7 +35,8 @@ constrain new          # Always start fresh
 constrain resume       # Resume the most recent incomplete session
 constrain show         # Display artifacts from the last completed session
 constrain list         # List all sessions
-constrain validate     # Validate all artifacts for internal consistency
+constrain validate     # Validate all artifacts; non-zero exit on any boundary error
+constrain boundary verify [FILE] [--root DIR]  # Verify boundary_register.yaml (CI, no LLM)
 constrain export -f <format>   # Export skeletons for downstream tools
 constrain mcp-server   # Run MCP server (stdio transport)
 ```
@@ -43,7 +44,7 @@ constrain mcp-server   # Run MCP server (stdio transport)
 ### Export Formats
 
 ```bash
-constrain export --format pact     # task.md skeleton from prompt.md
+constrain export --format pact     # task.md skeleton + boundary_register.yaml for Pact
 constrain export --format baton    # baton.yaml skeleton from component_map.yaml
 constrain export --format arbiter  # arbiter.yaml skeleton from trust_policy.yaml
 constrain export --format ledger   # schema_hints.yaml skeleton for Ledger
@@ -107,11 +108,11 @@ One of five analytical postures is randomly selected at session start (hidden fr
 | **Skeptic** | Tests that pass for wrong reasons, gameable metrics |
 | **Collaborator** | Same gaps, constructive framing |
 
-The challenge phase also probes for conflict-resolution gaps (data ownership, authority disputes) and storage obligations (databases, sensitive fields, erasure requirements, audit retention, encryption).
+The challenge phase also probes for conflict-resolution gaps (data ownership, authority disputes), storage obligations (databases, sensitive fields, erasure requirements, audit retention, encryption), and boundary identifiers: for every dependency, grant, credential, data store, metric/alert, log field, env var, and service name, "what exact literal does each side use, and where is it recorded?"
 
 ### Phase 3: Synthesize
 
-Generates five artifacts from the accumulated conversation, with one revision cycle. All YAML artifacts are validated before writing to disk. Cross-validation checks consistency across artifacts (component names, authority domains, edge/dependency alignment, trust floor ordering, annotation requirements).
+Generates five artifacts from the problem model and the verbatim interview transcript, with one revision cycle, plus `boundary_register.yaml`, which is written by code from the typed register (the LLM never rewrites it). Synthesis is blocked while the register has errors other than UNVERIFIED sides. All YAML artifacts are validated before writing to disk. Cross-validation checks consistency across artifacts (component names, authority domains, edge/dependency alignment, trust floor ordering, annotation requirements).
 
 ## Output Artifacts
 
@@ -150,6 +151,36 @@ constraints:
 - Storage backends (owner component, type, description)
 - Field hints (classification, annotations like `gdpr_erasable`, `audit_field`, `encrypted_at_rest`, `immutable`)
 
+**`boundary_register.yaml`** -- Boundary register (format `boundary-register/1`, shared with Pact and the factory). Consumed by Pact. See [Boundary Register](#boundary-register).
+
+## Boundary Register
+
+A recurring class of defect is two sides of a boundary disagreeing on an identifier: a gateway queries tables its database role was never granted; an alert filters on a metric resource type no check emits; log formatters write `level` while the platform reads `severity`; an uptime check targets a service name that does not exist. Constrain records every such identifier with the exact literal each side uses and a record that shows it, and verifies the claims mechanically.
+
+```yaml
+schema: "boundary-register/1"
+entries:
+  - id: gateway-db-role            # [A-Za-z0-9][A-Za-z0-9._-]*, unique
+    kind: role                     # name|endpoint|credential|audience|principal|grant|role|table|column|field|metric|label|env|config-key|topic|queue|bucket|secret|service|header|claim|enum|other
+    relation: equal                # equal | absent
+    description: "gateway must connect as the role the database grants"
+    sides:
+      - party: db                  # component id or "external:<system>"
+        role: grants               # defines | grants | consumes | presents | denies
+        value: gateway_ro          # exact literal
+        records:
+          - {kind: file, path: db/grants.sql, line: 2, sha256: "<hex of whole file>"}
+      - party: gateway
+        role: consumes
+        value: gateway_ro
+        records:
+          - {kind: observation, path: obs/pg_roles.txt, sha256: "<hex>", command: "psql -c '\\du'", observed_at: "2026-10-14T12:00:00Z"}
+```
+
+Verification (`constrain validate`, `constrain boundary verify`) re-reads each record relative to the project root and reports errors, never warnings, for: differing values (`mismatch`, or `near-miss` when they differ only by case or `-_. ` separators); a side with no records (`unverified`); placeholder values (the whole value is `TODO`, `TBD`, `TBC`, `assumed`, `placeholder`, `changeme`, `xxx...` or `?...`, or it contains an angle placeholder like `<project-id>`; `unknown`, `none`, `null`, `n/a` are real values); a record whose file is missing, whose sha256 no longer matches (`stale`), or whose cited line does not contain the value as a token; unsafe paths (absolute, `..`, or symlinks out of the root); and, for `relation: absent`, a denying record that contains the subject. Token matching means `svc-auth` does not match inside `svc-auth-runtime`, `foo.bar` does not match inside `foo.bar.baz`, and `/health` does not match inside `/health/ready`. One-sided entries (for example, extracted from a primed document) are UNVERIFIED with an open question for the other party. A `denies` side's value names the policy or resource whose record must exclude the subject.
+
+The model never supplies digests or trusted line numbers: when a value is cited (in the interview or a primed document), Constrain confirms the line and computes the sha256 itself. A value nobody can cite is recorded with `records: []` (UNVERIFIED) plus an open question, never guessed. UNVERIFIED entries are written and flagged; `constrain validate` exits non-zero until each has a record.
+
 ## Downstream Integration
 
 | Artifact | Consumed by | Purpose |
@@ -159,6 +190,7 @@ constraints:
 | `trust_policy.yaml` | Arbiter | Classification, soak config, authority, gates |
 | `component_map.yaml` | Pact, Baton | Topology for decomposition and circuit orchestration |
 | `schema_hints.yaml` | Ledger | Schema scaffolding from interview-derived storage hints |
+| `boundary_register.yaml` | Pact | Exact cross-boundary identifiers with verifiable records |
 
 ## Session Persistence
 

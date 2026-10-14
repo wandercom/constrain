@@ -10,6 +10,7 @@ the working directory clean.
         trust_policy.yaml
         component_map.yaml
         schema_hints.yaml
+        boundary_register.yaml
 
 The slug is derived from file content (e.g., the system name in prompt.md
 or a ``system`` key in constraints.yaml). All files from the same session

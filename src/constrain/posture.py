@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import random
 
+from .boundary import format_entry, render_boundary_register
 from .models import Phase, Posture, ProblemModel
 
 POSTURE_DESCRIPTIONS: dict[Posture, str] = {
@@ -42,7 +43,20 @@ At the end of your response, include a JSON block with your assessment:
 }
 ```
 
-Valid problem model fields: system_description (str), stakeholders (list), failure_modes (list of {description, severity, historical}), dependencies (list), assumptions (list), boundaries (list), history (list), success_shape (list), acceptance_criteria (list).
+Valid problem model fields: system_description (str), stakeholders (list), failure_modes (list of {description, severity, historical}), dependencies (list), assumptions (list), boundaries (list), history (list), success_shape (list), acceptance_criteria (list), open_questions (list), boundary_register (list of entries, below).
+
+boundary_register entries record identifiers that cross a boundary (format boundary-register/1). Each entry:
+  {"id": "<slug [A-Za-z0-9][A-Za-z0-9._-]*>", "kind": "<name|endpoint|credential|audience|principal|grant|role|table|column|field|metric|label|env|config-key|topic|queue|bucket|secret|service|header|claim|enum|other>",
+   "relation": "equal" | "absent", "description": "<why the sides must agree>",
+   "sides": [{"party": "<component id or external:<system>>", "role": "defines|grants|consumes|presents|denies",
+              "value": "<exact literal, verbatim from the engineer or a record>",
+              "records": [{"kind": "file", "path": "<project-relative path>", "line": <1-based line>}
+                          | {"kind": "observation", "path": "<project-relative file holding captured output>", "command": "<exact command/query>", "observed_at": "<RFC3339>"}]}]}
+Rules: relation "equal" needs a defines/grants side and a consumes/presents side; relation "absent" has exactly one presents side (the subject) and one or more denies sides whose records must not contain it.
+A denies side's value names the policy or resource that must exclude the subject (e.g. the IAM policy or grant list of the isolated service) — it is NOT the subject literal and never a placeholder; its record is a capture of that policy/resource, which must not contain the subject.
+An entry with only one side known is recorded as is (UNVERIFIED); ask for the other party's exact literal and record rather than inventing it.
+NEVER invent a value: use only literals the engineer stated or a document contains. NEVER supply sha256 — code computes digests and confirms lines.
+If the engineer cannot say where a value is recorded, emit the side with "records": [] (UNVERIFIED) and add an open_questions item asking for the record. Re-send an entry with the same id to update it.
 
 Set ready_to_proceed to true only when you have enough context to move to the next phase.
 """.strip()
@@ -63,7 +77,21 @@ def _format_problem_model(model: ProblemModel) -> str:
         for fm in model.failure_modes:
             desc = fm.get("description", str(fm))
             lines.append(f"  - {desc}")
+    if model.open_questions:
+        lines.append("Open Questions:")
+        for q in model.open_questions:
+            lines.append(f"  - {q}")
+    if model.boundary_register:
+        lines.append("Boundary Register (exact literals; do not alter):")
+        for entry in model.boundary_register:
+            lines.extend(f"  {line}" for line in format_entry(entry))
     return "\n".join(lines) if lines else "(No information gathered yet)"
+
+
+def _format_register_yaml(model: ProblemModel) -> str:
+    if not model.boundary_register:
+        return "(no boundary entries recorded)"
+    return render_boundary_register(model.boundary_register)
 
 
 def _understand_prompt(problem_model: ProblemModel) -> str:
@@ -107,6 +135,15 @@ You MUST also include at least one storage obligation probe. These test data sto
 - "Which records must be retained for audit or compliance purposes and can never be deleted?"
 - "Are any values stored as tokens or encrypted forms rather than raw values?"
 
+You MUST also run a boundary probe. For every dependency, integration, credential, permission grant, data store (database role, table, column), metric or alert filter, log field, environment variable, queue/topic/bucket, and service name the system crosses, ask: "What exact literal does each side use, and where is it recorded?" For example:
+- "Which database role does the gateway connect as, and which file grants that role access to those tables?"
+- "Your alert filters on a metric resource type — what exact string, and what do the checks actually emit? Can you paste the query output into a file?"
+- "Which credential does the readiness probe present, and where does the callee configure the audience/principal it accepts?"
+- "Your logger writes a level field — what key name, and what key does the log platform read?"
+- "Which service name does the uptime check target, and where is that service defined?"
+- "Which principals must NOT be able to invoke this service, and what policy dump shows they cannot?"
+Record each answer as a boundary_register entry. Never fill in a value the engineer did not state; never assume both sides agree. When the engineer cannot cite a file line or a captured observation, record the side with "records": [] (UNVERIFIED) and add an open question — do not guess.
+
 Weave these naturally into your challenges. Do not list them all at once.
 
 Do not reveal your posture or analytical lens to the engineer.
@@ -119,6 +156,7 @@ Current problem model:
 
 def _synthesize_prompt(problem_model: ProblemModel) -> str:
     context = _format_problem_model(problem_model)
+    register = _format_register_yaml(problem_model)
     return f"""Generate five artifacts from the conversation and problem model below.
 
 **Artifact 1: prompt.md**
@@ -276,6 +314,13 @@ Output format: use these EXACT delimiters in this EXACT order:
 --- SCHEMA_HINTS ---
 (YAML content for schema_hints.yaml — remember to quote all strings with colons)
 
+Boundary identifiers (critical):
+The boundary register below is authoritative and is written to boundary_register.yaml by code — do NOT output it and do NOT rewrite it.
+Whenever any artifact names a role, table, metric, label, log field, env var, credential, audience, principal, service, endpoint, topic, queue, bucket, header, or other cross-boundary identifier, copy the literal exactly (same case, same separators) from the register or the interview transcript. Never invent or normalize an identifier. If an artifact needs an identifier that is in neither, state it as an open question instead of guessing. Mention every UNVERIFIED entry (a side with no records) in prompt.md as an open question.
+
+Boundary register (boundary-register/1, verbatim):
+{register}
+
 Problem model:
 {context}"""
 
@@ -296,6 +341,8 @@ Categories:
 - history (list): What's been tried, what's gone wrong before
 - success_shape (list): Qualities of a good solution
 - acceptance_criteria (list): Concrete, testable conditions for "done"
+- boundary_register (list): identifiers that cross a boundary and appear LITERALLY in this document — role and grant names, table/column names, metric types and labels, log field keys, env vars, service names, endpoints, credentials/audiences/principals, topics, queues, buckets. Use the entry shape below. Copy each value byte-for-byte from the document; never normalize or invent one. For each side, give "records": [{{"kind": "file", "line": <line number in this document>}}] — code confirms the line and computes the digest; do not supply sha256 or path. Only include sides the document actually states; leave the other side out rather than assuming it (a one-sided entry is kept as UNVERIFIED until the other party is recorded).
+  Entry shape: {{"id": "<slug>", "kind": "<name|endpoint|credential|audience|principal|grant|role|table|column|field|metric|label|env|config-key|topic|queue|bucket|secret|service|header|claim|enum|other>", "relation": "equal", "description": "<why the sides must agree>", "sides": [{{"party": "<component or external:<system>>", "role": "<defines|grants|consumes|presents|denies>", "value": "<exact literal>", "records": [...]}}]}}
 
 Current understanding (avoid duplicating what's already known):
 {context}
@@ -317,12 +364,16 @@ Document to analyze:
 
 def _revision_prompt(feedback: str, problem_model: ProblemModel) -> str:
     context = _format_problem_model(problem_model)
+    register = _format_register_yaml(problem_model)
     return f"""The engineer has reviewed the artifacts and provided feedback. Regenerate all five artifacts incorporating the feedback.
 
 Feedback: {feedback}
 
 Problem model:
 {context}
+
+Boundary register (authoritative, written by code — do not output or rewrite it; copy its literals exactly wherever an artifact names a cross-boundary identifier, never invent one):
+{register}
 
 YAML formatting rules (critical — malformed YAML causes hard failures):
 - ALL string values containing colons MUST be quoted with double quotes

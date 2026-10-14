@@ -18,6 +18,17 @@ from .backends import (
     BackendTimeoutError,
     create_backend,
 )
+from .boundary import (
+    anchor_boundary_update,
+    blocking_findings,
+    errors as boundary_errors,
+    load_boundary_register_text,
+    question_key,
+    render_boundary_register,
+    unresolved_question_keys,
+    unverified_questions,
+    validate_boundary_register,
+)
 from .models import Message, Phase, Session
 from .posture import get_prime_prompt, get_revision_prompt, get_system_prompt
 from .session import SessionManager
@@ -57,12 +68,15 @@ class ConversationEngine:
         backend: Backend | None = None,
         io: TerminalIO | None = None,
         config: EngineConfig | None = None,
+        project_root: Path | None = None,
     ) -> None:
         self.session = session
         self.session_mgr = session_mgr
         self.backend: Backend = backend or create_backend()
         self.io: TerminalIO = io or DefaultIO()
         self.config = config or EngineConfig()
+        # Root that boundary-register record paths are relative to.
+        self.project_root = Path(project_root) if project_root else Path.cwd()
 
     # ── public API ────────────────────────────────────────
 
@@ -100,9 +114,11 @@ class ConversationEngine:
 
     # ── document priming ───────────────────────────────────
 
-    def prime_with_document(self, path: Path) -> dict:
+    def prime_with_document(self, path: Path, source_label: str | None = None) -> dict:
         """Ingest a document and extract problem model information.
 
+        *source_label* describes the document's real origin when *path* is a
+        scratch file (used in open questions instead of the temp path).
         Returns a dict with keys: 'extracted_count', 'summary'.
         """
         text = path.read_text(encoding="utf-8", errors="replace")
@@ -121,7 +137,7 @@ class ConversationEngine:
         display_text, model_update, _ = self._parse_response(raw)
 
         if model_update:
-            self.session.problem_model.apply_update(model_update)
+            self._apply_model_update(model_update, primed_path=path, source_label=source_label)
             self.session.touch()
             self.session_mgr.save(self.session)
 
@@ -139,6 +155,30 @@ class ConversationEngine:
             "summary": display_text[:200],
             "fields": list(model_update.keys()) if model_update else [],
         }
+
+    def load_prior_register(self, text: str) -> int:
+        """Load a previous session's boundary register without an LLM.
+
+        Each prior record is re-anchored against the current files (line
+        re-confirmed, digest recomputed); a record whose literal is gone is
+        dropped and its side becomes UNVERIFIED with an open question.
+        Returns the number of entries loaded.
+        """
+        try:
+            data = load_boundary_register_text(text)
+        except ValueError as e:
+            self.io.display(f"  Skipping previous {e}")
+            return 0
+        entries = data.get("entries") or []
+        if not isinstance(entries, list) or not entries:
+            return 0
+        before = len(self.session.problem_model.boundary_register)
+        # Records come from a register Constrain wrote, so their observed_at
+        # is kept; lines and digests are still recomputed against today's files.
+        self._apply_model_update({"boundary_register": entries}, keep_observed_at=True)
+        self.session.touch()
+        self.session_mgr.save(self.session)
+        return len(self.session.problem_model.boundary_register) - before
 
     def prime_interactive(self, initial_paths: list[Path] | None = None) -> int:
         """Interactive priming loop. Returns number of documents ingested."""
@@ -250,7 +290,7 @@ class ConversationEngine:
             self.io.display(f"\n{display_text}\n")
 
             if model_update:
-                self.session.problem_model.apply_update(model_update)
+                self._apply_model_update(model_update)
                 self.session.touch()
 
             current = self._current_rounds(phase)
@@ -271,12 +311,21 @@ class ConversationEngine:
                 break
 
     def _run_synthesis(self) -> None:
-        """Run synthesis phase: generate artifacts, allow one revision."""
+        """Run synthesis phase: generate artifacts, allow one revision.
+
+        Blocked (session stays in synthesize, nothing is marked complete)
+        while the boundary register has errors other than UNVERIFIED sides.
+        """
+        if not self._boundary_gate():
+            return
+
         system = get_system_prompt(
             Phase.synthesize, self.session.problem_model
         )
-        # Fresh messages for synthesis — not continued conversation
-        synth_messages = [{"role": "user", "content": "Generate the artifacts now."}]
+        # Fresh messages for synthesis — not continued conversation. The
+        # transcript is passed verbatim so identifiers are copied, not
+        # re-guessed from the lossy problem-model summary.
+        synth_messages = [{"role": "user", "content": self._synthesis_request()}]
 
         self.io.display("\nGenerating artifacts...\n")
 
@@ -293,6 +342,7 @@ class ConversationEngine:
             self.session.trust_policy_yaml = ""
             self.session.component_map_yaml = ""
             self.session.schema_hints_yaml = ""
+            self._finalize_boundary_register()
             self.session_mgr.transition_phase(self.session, Phase.complete)
             self.session_mgr.save(self.session)
             return
@@ -336,8 +386,161 @@ class ConversationEngine:
         self.session.trust_policy_yaml = artifacts.trust_policy_yaml
         self.session.component_map_yaml = artifacts.component_map_yaml
         self.session.schema_hints_yaml = artifacts.schema_hints_yaml
+        self._finalize_boundary_register()
         self.session_mgr.transition_phase(self.session, Phase.complete)
         self.session_mgr.save(self.session)
+
+    # ── boundary register ─────────────────────────────────
+
+    def _apply_model_update(
+        self,
+        update: dict,
+        primed_path: Path | None = None,
+        source_label: str | None = None,
+        keep_observed_at: bool = False,
+    ) -> None:
+        """Apply an LLM update; boundary records are anchored by code first.
+
+        *source_label* names where a primed document really came from (e.g.
+        the archive of a previous session) when *primed_path* is a scratch
+        file, so open questions never point at a temp path.
+        """
+        pm = self.session.problem_model
+        questions: list[str] = []
+        if "boundary_register" in update:
+            default_path = None
+            if primed_path is not None:
+                try:
+                    default_path = (
+                        Path(primed_path).resolve()
+                        .relative_to(self.project_root.resolve()).as_posix()
+                    )
+                except ValueError:
+                    where = source_label or f"Primed document {primed_path}"
+                    questions.append(
+                        f"{where} is not a file in the project root; identifiers taken "
+                        "from it are UNVERIFIED until a project file records them."
+                    )
+            anchored, notes = anchor_boundary_update(
+                update["boundary_register"], self.project_root,
+                default_path=default_path, keep_observed_at=keep_observed_at,
+            )
+            questions.extend(notes)
+            update = {**update, "boundary_register": anchored}
+        before = set(pm.open_questions)
+        pm.apply_update(update)
+        for q in pm.open_questions:
+            if q not in before and q.startswith("Rejected boundary entry"):
+                self.io.display(f"  {q}")
+        questions.extend(unverified_questions(pm.boundary_register))
+
+        # Boundary questions ("Boundary <id>: <party> (<role>) ...") are kept
+        # only while that side/counterpart is still unresolved, one per key.
+        # Plain questions are deduplicated by their full text.
+        unresolved = unresolved_question_keys(pm.boundary_register)
+
+        def keep(q: str) -> bool:
+            return not q.startswith("Boundary ") or question_key(q) in unresolved
+
+        pm.open_questions[:] = [q for q in pm.open_questions if keep(q)]
+        seen = {question_key(q) for q in pm.open_questions}
+        for q in questions:
+            k = question_key(q)
+            if keep(q) and k not in seen:
+                pm.open_questions.append(q)
+                seen.add(k)
+
+    def _boundary_findings(self):
+        return validate_boundary_register(
+            self.session.problem_model.boundary_register, self.project_root
+        )
+
+    def _boundary_gate(self) -> bool:
+        """Return True if synthesis may proceed; otherwise try to resolve.
+
+        Errors other than UNVERIFIED (mismatch, near-miss, stale or missing
+        records, placeholders, malformed relations) block synthesis. The
+        engineer gets a bounded resolution conversation; if errors remain the
+        session is saved in the synthesize phase and nothing is written.
+        """
+        blocking = blocking_findings(self._boundary_findings())
+        if not blocking:
+            return True
+        self.io.display("\nBoundary verification failed:")
+        for f in blocking:
+            self.io.display(f"  {f}")
+        if self._resolve_boundaries(blocking):
+            self.io.display("Boundary register now verifies. Continuing synthesis.")
+            return True
+        self.io.display(
+            "\nSynthesis blocked: the boundary register still has errors. Fix the system "
+            "or the cited records, then run 'constrain resume'."
+        )
+        self.session_mgr.save(self.session)
+        return False
+
+    def _resolve_boundaries(self, blocking) -> bool:
+        """Challenge-posture conversation focused on failing boundary entries."""
+        self._add_message(
+            "user",
+            "Boundary verification failed. For each finding below, ask me for the exact "
+            "literal each side uses and where it is recorded, then re-send the corrected "
+            "boundary_register entry (same id). Do not guess values.\n"
+            + "\n".join(f"- {f}" for f in blocking),
+        )
+        for _ in range(self.config.challenge_max):
+            system = get_system_prompt(
+                Phase.challenge, self.session.problem_model, self.session.posture
+            )
+            raw = self._call_api(system, self._api_messages())
+            display_text, model_update, _ = self._parse_response(raw)
+            self._add_message("assistant", raw)
+            self.session.round += 1
+            self.io.display(f"\n{display_text}\n")
+            if model_update:
+                self._apply_model_update(model_update)
+            self.session_mgr.save(self.session)
+            blocking = blocking_findings(self._boundary_findings())
+            if not blocking:
+                return True
+            for f in blocking:
+                self.io.display(f"  {f}")
+            try:
+                user_input = self.io.prompt("\n> ")
+            except EOFError:
+                return False
+            if user_input.strip():
+                self._add_message("user", user_input.strip())
+                self.session_mgr.save(self.session)
+        return False
+
+    def _finalize_boundary_register(self) -> None:
+        """Write the register artifact from the typed model (never from LLM text)."""
+        pm = self.session.problem_model
+        self.session.boundary_register_yaml = render_boundary_register(pm.boundary_register)
+        unverified = [f for f in boundary_errors(self._boundary_findings()) if not f.blocking]
+        if unverified:
+            self.io.display(
+                f"\nboundary_register.yaml: {len(unverified)} UNVERIFIED side(s) written and "
+                "flagged; 'constrain validate' fails until each has a record:"
+            )
+            for f in unverified:
+                self.io.display(f"  {f}")
+
+    def _synthesis_request(self, max_chars: int = 150_000) -> str:
+        transcript = "\n\n".join(
+            f"[{m.role}]\n{m.content}" for m in self.session.conversation
+        )
+        if len(transcript) > max_chars:
+            transcript = "(earlier transcript truncated)\n" + transcript[-max_chars:]
+        if not transcript:
+            return "Generate the artifacts now."
+        return (
+            "Generate the artifacts now.\n\n"
+            "Interview transcript (verbatim — copy identifiers exactly as written here "
+            "and in the boundary register; never re-invent them):\n\n"
+            + transcript
+        )
 
     def _display_synthesis_preview(self, artifacts, prefix: str = "") -> None:
         """Display a truncated preview of all synthesis artifacts."""
@@ -348,6 +551,11 @@ class ConversationEngine:
             ("trust_policy.yaml", artifacts.trust_policy_yaml),
             ("component_map.yaml", artifacts.component_map_yaml),
             ("schema_hints.yaml", artifacts.schema_hints_yaml),
+            (
+                "boundary_register.yaml (written by code)",
+                render_boundary_register(self.session.problem_model.boundary_register)
+                if self.session.problem_model.boundary_register else "",
+            ),
         ]:
             if content:
                 self.io.display(f"\n--- {prefix}{label} ---")
