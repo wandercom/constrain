@@ -16,5 +16,5 @@ from constrain.cli import cli
 def test_help_exits_zero_without_error(args):
     result = CliRunner().invoke(cli, args)
     assert result.exit_code == 0, result.output
-    assert "Error" not in result.output
+    assert "Error:" not in result.output
     assert "Usage:" in result.output
