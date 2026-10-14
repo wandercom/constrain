@@ -34,6 +34,8 @@ class MockProblemModel:
     history: list = dc_field(default_factory=list)
     success_shape: list = dc_field(default_factory=list)
     acceptance_criteria: list = dc_field(default_factory=list)
+    open_questions: list = dc_field(default_factory=list)
+    boundary_register: list = dc_field(default_factory=list)
 
     def apply_update(self, update: dict) -> None:
         pass

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import os
 import sys
 from pathlib import Path
@@ -20,6 +21,17 @@ from .session import SessionManager
 from .archive import archive_artifacts, list_archived_sessions, load_archived_artifacts
 from . import kindex_integration as kindex
 from .synthesizer import validate_artifacts, validate_yaml_content, write_artifacts, SynthesisArtifacts
+from .boundary import (
+    BOUNDARY_REGISTER_FILE,
+    ERROR,
+    errors as boundary_errors,
+    load_boundary_register_text,
+    render_boundary_register,
+    validate_boundary_register,
+)
+from .models import ProblemModel
+
+logger = logging.getLogger(__name__)
 
 
 class SafeGroup(click.Group):
@@ -147,7 +159,14 @@ def resolve_config(
     return cfg
 
 
-_ARTIFACT_NAMES = ["prompt.md", "constraints.yaml", "trust_policy.yaml", "component_map.yaml", "schema_hints.yaml"]
+_ARTIFACT_NAMES = [
+    "prompt.md",
+    "constraints.yaml",
+    "trust_policy.yaml",
+    "component_map.yaml",
+    "schema_hints.yaml",
+    BOUNDARY_REGISTER_FILE,
+]
 
 
 def _archive_dir(cwd: Path) -> Path:
@@ -210,6 +229,13 @@ def _auto_prime_previous(engine: ConversationEngine, cwd: Path) -> None:
             content = previous.get(name, "")
             if content.strip():
                 parts.append(f"=== Previous {name} ===\n{content}")
+        # The register is loaded typed (records re-anchored by code), never
+        # re-extracted by the LLM from text.
+        register_text = previous.get(BOUNDARY_REGISTER_FILE, "")
+        if register_text.strip():
+            loaded = engine.load_prior_register(register_text)
+            if loaded:
+                click.echo(f"Loaded {loaded} boundary entr{'y' if loaded == 1 else 'ies'} from the previous register.")
 
     if not parts:
         return
@@ -314,6 +340,7 @@ def _run_engine(
             for orig, dest in archived:
                 click.echo(f"  {orig.name}")
 
+        register_yaml = _session_register_yaml(session)
         written = write_artifacts(
             session.prompt_md,
             session.constraints_yaml,
@@ -322,10 +349,22 @@ def _run_engine(
             trust_policy_yaml=session.trust_policy_yaml,
             component_map_yaml=session.component_map_yaml,
             schema_hints_yaml=session.schema_hints_yaml,
+            boundary_register_yaml=register_yaml,
         )
         click.echo(f"\nArtifacts written:")
         for p in written:
             click.echo(f"  {p}")
+        if register_yaml:
+            flagged = boundary_errors(
+                validate_boundary_register(load_boundary_register_text(register_yaml), cwd)
+            )
+            if flagged:
+                click.echo(
+                    f"\n{BOUNDARY_REGISTER_FILE}: {len(flagged)} boundary error(s) flagged — "
+                    "'constrain validate' fails until each is resolved:"
+                )
+                for f in flagged:
+                    click.echo(f"  {f}")
 
         # Publish artifacts to kindex (if available)
         _kindex_publish_artifacts(session)
@@ -513,6 +552,10 @@ def cmd_show():
     if session.schema_hints_yaml:
         click.echo("\n=== schema_hints.yaml ===\n")
         click.echo(session.schema_hints_yaml)
+    register_yaml = _session_register_yaml(session)
+    if register_yaml:
+        click.echo(f"\n=== {BOUNDARY_REGISTER_FILE} ===\n")
+        click.echo(register_yaml)
 
 
 @cli.command("list")
@@ -560,22 +603,23 @@ def cmd_export(fmt):
     # Map format → (output filename, ...)
     _EXPORT_FILES = {
         "baton": ["baton.yaml"],
-        "pact": ["task.md"],
+        "pact": ["task.md", BOUNDARY_REGISTER_FILE],
         "arbiter": ["arbiter.yaml"],
         "ledger": ["schema_hints.yaml"],
     }
 
-    # Archive any existing export target before writing
-    export_file = _EXPORT_FILES[fmt][0]
+    # Archive any existing export targets before writing
+    export_files = _EXPORT_FILES[fmt]
     cwd = Path.cwd()
     subdir, archived = archive_artifacts(
         cwd,
-        [export_file],
+        export_files,
         archive_base=_archive_dir(cwd),
-        slug_source_priority=[export_file],
+        slug_source_priority=export_files,
     )
     if archived:
-        click.echo(f"Archived {export_file} to {subdir.name}/")
+        for orig, _dest in archived:
+            click.echo(f"Archived {orig.name} to {subdir.name}/")
 
     if fmt == "baton":
         if not session.component_map_yaml:
@@ -635,9 +679,36 @@ def cmd_export(fmt):
                 task_lines.append(f"- {ac}")
             task_lines.append("")
 
+        # Pact reads boundary_register.yaml at the project root. Write it
+        # verbatim (code-generated; never re-dumped through a sanitizer).
+        register_yaml = _session_register_yaml(session) or render_boundary_register([])
+        register_findings = validate_boundary_register(
+            load_boundary_register_text(register_yaml), cwd
+        )
+        flagged = boundary_errors(register_findings)
+        task_lines.extend([
+            "## Boundary Register",
+            "",
+            f"See {BOUNDARY_REGISTER_FILE}: every identifier crossing a boundary, the exact "
+            "literal each side uses, and the record that shows it. Do not assume any value "
+            "not recorded there.",
+            "",
+        ])
+        if flagged:
+            task_lines.append(f"Unresolved ({len(flagged)}):")
+            task_lines.append("")
+            for f in flagged:
+                task_lines.append(f"- {f}")
+            task_lines.append("")
+
         out = cwd / "task.md"
         out.write_text("\n".join(task_lines), encoding="utf-8")
         click.echo(f"Written: {out}")
+        reg_out = cwd / BOUNDARY_REGISTER_FILE
+        reg_out.write_text(register_yaml, encoding="utf-8")
+        click.echo(f"Written: {reg_out}")
+        if flagged:
+            click.echo(f"  ({len(flagged)} boundary error(s); run 'constrain boundary verify')")
 
     elif fmt == "arbiter":
         if not session.trust_policy_yaml:
@@ -728,6 +799,9 @@ def cmd_validate():
     else:
         click.echo("\nNo cross-validation warnings.")
 
+    # Boundary register: mechanical verification against the project root.
+    boundary_failures = _report_boundary_register(_session_register_yaml(session), Path.cwd())
+
     # Check prompt.md sections
     if artifacts.prompt_md:
         missing_sections = []
@@ -740,9 +814,81 @@ def cmd_validate():
         else:
             click.echo("\nprompt.md: all required sections present")
 
-    if errors:
-        raise click.ClickException(f"{len(errors)} validation error(s) found.")
+    if errors or boundary_failures:
+        parts = []
+        if errors:
+            parts.append(f"{len(errors)} validation error(s)")
+        if boundary_failures:
+            parts.append(f"{boundary_failures} boundary error(s)")
+        raise click.ClickException(" and ".join(parts) + " found.")
     click.echo("\nValidation passed.")
+
+
+def _session_register_yaml(session) -> str:
+    """The session's register artifact; rendered from the model for older sessions."""
+    text = getattr(session, "boundary_register_yaml", "")
+    if isinstance(text, str) and text.strip():
+        return text
+    pm = getattr(session, "problem_model", None)
+    if isinstance(pm, ProblemModel) and pm.boundary_register:
+        return render_boundary_register(pm.boundary_register)
+    return ""
+
+
+def _report_boundary_register(register_yaml: str, project_root: Path, *, required: bool = False) -> int:
+    """Print boundary findings; return the number of errors (0 = pass)."""
+    if not register_yaml:
+        if required:
+            click.echo(f"  {BOUNDARY_REGISTER_FILE}: missing")
+            return 1
+        click.echo(f"\n  {BOUNDARY_REGISTER_FILE}: (empty)")
+        return 0
+    try:
+        data = load_boundary_register_text(register_yaml)
+    except ValueError as e:
+        click.echo(f"\n  {BOUNDARY_REGISTER_FILE}: INVALID - {e}")
+        return 1
+    findings = validate_boundary_register(data, project_root)
+    errs = [f for f in findings if f.severity == ERROR]
+    warns = [f for f in findings if f.severity != ERROR]
+    entries = data.get("entries") or []
+    count = len(entries) if isinstance(entries, list) else 0
+    if errs:
+        click.echo(f"\n{BOUNDARY_REGISTER_FILE}: {len(errs)} error(s) in {count} entr{'y' if count == 1 else 'ies'}:")
+        for f in errs:
+            click.echo(f"  - {f}")
+    else:
+        click.echo(f"\n{BOUNDARY_REGISTER_FILE}: {count} entr{'y' if count == 1 else 'ies'} verified")
+    for f in warns:
+        click.echo(f"  - {f}")
+    return len(errs)
+
+
+@cli.group("boundary")
+def cmd_boundary():
+    """Verify the boundary register (exact cross-boundary identifiers)."""
+
+
+@cmd_boundary.command("verify")
+@click.argument("register_file", required=False, default=BOUNDARY_REGISTER_FILE,
+                type=click.Path(dir_okay=False))
+@click.option("--root", "root", type=click.Path(file_okay=False, exists=True), default=None,
+              help="Project root that record paths are relative to (default: the register's directory).")
+def cmd_boundary_verify(register_file, root):
+    """Verify REGISTER_FILE (default ./boundary_register.yaml); non-zero exit on any error.
+
+    No LLM is involved: every record is re-read, re-hashed, and checked for
+    the exact literal. Suitable for CI.
+    """
+    path = Path(register_file)
+    if not path.is_file():
+        raise click.ClickException(f"{path} not found.")
+    project_root = Path(root) if root else path.resolve().parent
+    failures = _report_boundary_register(
+        path.read_text(encoding="utf-8"), project_root, required=True
+    )
+    if failures:
+        raise click.ClickException(f"{failures} boundary error(s) found.")
 
 
 @cli.command("archive")

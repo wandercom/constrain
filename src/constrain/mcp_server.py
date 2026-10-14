@@ -71,6 +71,8 @@ class ConstrainMCPServer:
             result["component_map_yaml"] = s.component_map_yaml
         if s.schema_hints_yaml:
             result["schema_hints_yaml"] = s.schema_hints_yaml
+        if s.boundary_register_yaml:
+            result["boundary_register_yaml"] = s.boundary_register_yaml
         return result
 
     # ── Tools ──────────────────────────────────────────────
@@ -135,12 +137,17 @@ def _session_detail(s: Session) -> dict:
             "history": pm.history,
             "success_shape": pm.success_shape,
             "acceptance_criteria": pm.acceptance_criteria,
+            "open_questions": pm.open_questions,
+            "boundary_register": [
+                e.model_dump(by_alias=True, mode="json") for e in pm.boundary_register
+            ],
         },
         "has_prompt_md": bool(s.prompt_md),
         "has_constraints_yaml": bool(s.constraints_yaml),
         "has_trust_policy_yaml": bool(s.trust_policy_yaml),
         "has_component_map_yaml": bool(s.component_map_yaml),
         "has_schema_hints_yaml": bool(s.schema_hints_yaml),
+        "has_boundary_register_yaml": bool(s.boundary_register_yaml),
         "created_at": s.created_at,
         "updated_at": s.updated_at,
     }
@@ -171,8 +178,9 @@ def _create_mcp_app():
             "interview (understand, challenge, synthesize). It produces prompt.md "
             "(an induced-understanding briefing), constraints.yaml (boundary "
             "conditions), trust_policy.yaml (trust and authority model), "
-            "component_map.yaml (component topology), and schema_hints.yaml "
-            "(storage schema hints for Ledger). Use the tools below to "
+            "component_map.yaml (component topology), schema_hints.yaml "
+            "(storage schema hints for Ledger), and boundary_register.yaml "
+            "(exact cross-boundary identifiers with verifiable records). Use the tools below to "
             "inspect sessions and artifacts."
         ),
     )

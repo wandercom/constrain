@@ -294,10 +294,20 @@ _ALL_ARTIFACT_FILES = [
     "trust_policy.yaml",
     "component_map.yaml",
     "schema_hints.yaml",
+    "boundary_register.yaml",
 ]
 
 
-_OPTIONAL_ARTIFACT_FILES = {"trust_policy.yaml", "component_map.yaml", "schema_hints.yaml"}
+_OPTIONAL_ARTIFACT_FILES = {
+    "trust_policy.yaml",
+    "component_map.yaml",
+    "schema_hints.yaml",
+    "boundary_register.yaml",
+}
+
+# Written by code from the typed register; emitted verbatim (never "sanitized",
+# which could alter a literal).
+_VERBATIM_ARTIFACT_FILES = {"boundary_register.yaml"}
 
 
 def write_artifacts(
@@ -308,6 +318,7 @@ def write_artifacts(
     trust_policy_yaml: str = "",
     component_map_yaml: str = "",
     schema_hints_yaml: str = "",
+    boundary_register_yaml: str = "",
 ) -> list[Path]:
     """Write all artifacts to output_dir.
 
@@ -322,6 +333,7 @@ def write_artifacts(
         "trust_policy.yaml": trust_policy_yaml,
         "component_map.yaml": component_map_yaml,
         "schema_hints.yaml": schema_hints_yaml,
+        "boundary_register.yaml": boundary_register_yaml,
     }
 
     # Check for existing files
@@ -338,7 +350,7 @@ def write_artifacts(
         if not content and name in _OPTIONAL_ARTIFACT_FILES:
             continue  # Skip empty optional artifacts (backward compat for old sessions)
         # Sanitize YAML artifacts before writing
-        if name.endswith(".yaml"):
+        if name.endswith(".yaml") and name not in _VERBATIM_ARTIFACT_FILES:
             content = sanitize_yaml(content)
         path = out / name
         path.write_text(content, encoding="utf-8")
