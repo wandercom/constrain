@@ -6,6 +6,20 @@ import os
 from typing import Protocol
 
 
+class Completion(str):
+    """Text-compatible response retaining provider termination evidence."""
+
+    def __new__(cls, text: str, stop_reason: str | None = None, output_tokens: int | None = None):
+        obj = super().__new__(cls, text)
+        obj.stop_reason = stop_reason
+        obj.output_tokens = output_tokens
+        return obj
+
+    @property
+    def truncated(self) -> bool:
+        return self.stop_reason in {"max_tokens", "length"}
+
+
 class BackendError(Exception):
     """Base class for backend errors."""
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 
 from . import (
+    Completion,
     BackendAuthError,
     BackendConnectionError,
     BackendRateLimitError,
@@ -73,7 +74,10 @@ class OpenAIBackend:
             choice = resp.choices[0]
             if not choice.message.content:
                 raise RuntimeError("API returned an empty response")
-            return choice.message.content
+            return Completion(
+                choice.message.content, getattr(choice, "finish_reason", None),
+                getattr(getattr(resp, "usage", None), "completion_tokens", None),
+            )
         except self._openai.RateLimitError as e:
             raise BackendRateLimitError(str(e)) from e
         except self._openai.APITimeoutError as e:

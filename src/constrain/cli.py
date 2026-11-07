@@ -206,6 +206,20 @@ def _kindex_prompt_and_index(cwd: Path) -> None:
     # auto is False → skip silently
 
 
+def _project_topic(cwd: Path) -> str:
+    """Use explicit project identity, then repository identity, not a run folder."""
+    override = os.environ.get("CONSTRAIN_PROJECT", "").strip()
+    if override:
+        return override
+    for directory in (cwd, *cwd.parents):
+        name = kindex.read_kin_config(directory).get("name")
+        if name:
+            return name
+        if (directory / ".git").exists():
+            return directory.name
+    return cwd.parent.name if cwd.name in {"constrain", ".constrain"} else cwd.name
+
+
 def _auto_prime_previous(engine: ConversationEngine, cwd: Path) -> None:
     """Prime the engine with previous artifacts and kindex context.
 
@@ -217,8 +231,7 @@ def _auto_prime_previous(engine: ConversationEngine, cwd: Path) -> None:
 
     # 1. Kindex graph context
     if kindex.is_available():
-        kin_config = kindex.read_kin_config(cwd)
-        topic = kin_config.get("name", cwd.name)
+        topic = _project_topic(cwd)
         graph_context = kindex.fetch_context(f"{topic} constraints boundaries")
         if graph_context.strip():
             parts.append(f"=== Kindex Graph Context ===\n{graph_context}")
