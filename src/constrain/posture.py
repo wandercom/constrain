@@ -43,6 +43,8 @@ At the end of your response, include a JSON block with your assessment:
 }
 ```
 
+To retract superseded facts, include "remove": {"field_name": [exact old values]} in problem_model_update. For boundary_register use entry IDs rather than whole entries. Removal happens before additions; record the reason in history. Do not repurpose a retired boundary merely to pass validation.
+
 Valid problem model fields: system_description (str), stakeholders (list), failure_modes (list of {description, severity, historical}), dependencies (list), assumptions (list), boundaries (list), history (list), success_shape (list), acceptance_criteria (list), open_questions (list), boundary_register (list of entries, below).
 
 boundary_register entries record identifiers that cross a boundary (format boundary-register/1). Each entry:

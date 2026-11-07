@@ -6,6 +6,7 @@ import os
 
 from ..keyconfig import KeyConfigError, anthropic_api_key
 from . import (
+    Completion,
     BackendAuthError,
     BackendConnectionError,
     BackendRateLimitError,
@@ -66,7 +67,10 @@ class AnthropicBackend:
             )
             if not text:
                 raise RuntimeError("API returned no text content")
-            return text
+            return Completion(
+                text, getattr(resp, "stop_reason", None),
+                getattr(getattr(resp, "usage", None), "output_tokens", None),
+            )
         except self._anthropic.RateLimitError as e:
             raise BackendRateLimitError(str(e)) from e
         except self._anthropic.APITimeoutError as e:

@@ -12,6 +12,7 @@ from typing import Protocol
 
 from .backends import (
     Backend,
+    Completion,
     BackendAuthError,
     BackendConnectionError,
     BackendRateLimitError,
@@ -329,23 +330,7 @@ class ConversationEngine:
 
         self.io.display("\nGenerating artifacts...\n")
 
-        raw = self._call_api(system, synth_messages)
-
-        try:
-            artifacts = parse_synthesis_output(raw)
-        except ValueError as e:
-            self.io.display(f"Warning: {e}")
-            self.io.display("Raw synthesis output:")
-            self.io.display(raw)
-            self.session.prompt_md = raw
-            self.session.constraints_yaml = ""
-            self.session.trust_policy_yaml = ""
-            self.session.component_map_yaml = ""
-            self.session.schema_hints_yaml = ""
-            self._finalize_boundary_register()
-            self.session_mgr.transition_phase(self.session, Phase.complete)
-            self.session_mgr.save(self.session)
-            return
+        artifacts = self._generate_artifacts(system, synth_messages)
 
         artifacts = self._repair_artifacts_if_needed(artifacts)
         self._warn_about_artifact_validation(artifacts)
@@ -363,21 +348,18 @@ class ConversationEngine:
             feedback = ""
 
         if feedback.strip():
+            self.session.conversation.append(Message(role="user", content=feedback.strip()))
+            self.session_mgr.save(self.session)
             revision_prompt = get_revision_prompt(
                 feedback.strip(), self.session.problem_model
             )
             revision_messages = [{"role": "user", "content": revision_prompt}]
-            raw2 = self._call_api(
+            artifacts = self._generate_artifacts(
                 "You are a technical writer revising artifacts based on feedback.",
                 revision_messages,
             )
-            try:
-                artifacts = parse_synthesis_output(raw2)
-            except ValueError:
-                self.io.display("Could not parse revised output. Keeping original artifacts.")
-            else:
-                artifacts = self._repair_artifacts_if_needed(artifacts)
-                self._warn_about_artifact_validation(artifacts)
+            artifacts = self._repair_artifacts_if_needed(artifacts)
+            self._warn_about_artifact_validation(artifacts)
 
             self._display_synthesis_preview(artifacts, prefix="Revised ")
 
@@ -389,6 +371,41 @@ class ConversationEngine:
         self._finalize_boundary_register()
         self.session_mgr.transition_phase(self.session, Phase.complete)
         self.session_mgr.save(self.session)
+
+    def _generate_artifacts(self, system: str, messages: list[dict]):
+        """Persist every response; continue token-limited output at most twice."""
+        messages = [dict(message) for message in messages]
+        raw = ""
+        self.session.synthesis_error = ""
+        try:
+            for attempt in range(3):
+                response = self._call_api(system, messages)
+                self.session.synthesis_attempts.append({
+                    "text": str(response),
+                    "stop_reason": getattr(response, "stop_reason", None),
+                    "output_tokens": getattr(response, "output_tokens", None),
+                    "continuation": attempt > 0,
+                })
+                self.session_mgr.save(self.session)
+                raw += response
+                if not isinstance(response, Completion) or not response.truncated:
+                    break
+                if attempt == 2:
+                    raise ValueError("Output still truncated after two continuations")
+                messages.extend([
+                    {"role": "assistant", "content": str(response)},
+                    {"role": "user", "content": "Continue exactly where you stopped. Return only the remaining artifact text, without repeating any text or adding commentary."},
+                ])
+            artifacts = parse_synthesis_output(raw)
+            if not artifacts.prompt_md.strip() or not artifacts.constraints_yaml.strip():
+                raise ValueError("Synthesis requires nonempty prompt and constraints artifacts")
+            return artifacts
+        except Exception as exc:
+            self.session.synthesis_error = str(exc)
+            self.session_mgr.save(self.session)
+            raise RuntimeError(
+                f"Synthesis incomplete: {exc}. Raw responses saved in session {self.session.id}; resume with constrain resume."
+            ) from exc
 
     # ── boundary register ─────────────────────────────────
 
@@ -597,19 +614,18 @@ class ConversationEngine:
         )
 
         try:
-            repaired_raw = self._call_api(
+            repaired = self._generate_artifacts(
                 repair_system,
                 [{"role": "user", "content": repair_user}],
             )
-            repaired = parse_synthesis_output(repaired_raw)
         except Exception as e:
-            self.io.display(f"Automatic repair failed: {e}")
-            return artifacts
+            raise RuntimeError(f"Automatic repair failed; session remains resumable: {e}") from e
 
         repaired_errors = self._collect_yaml_errors(repaired)
         if repaired_errors:
-            self.io.display("Automatic repair did not produce valid YAML.")
-            return repaired
+            self.session.synthesis_error = "; ".join(repaired_errors)
+            self.session_mgr.save(self.session)
+            raise RuntimeError("Automatic repair did not produce valid YAML; session remains resumable")
 
         self.io.display("Automatic YAML repair succeeded.")
         return repaired
@@ -625,7 +641,9 @@ class ConversationEngine:
         ]:
             if content:
                 try:
-                    validate_yaml_content(content, name)
+                    data = validate_yaml_content(content, name)
+                    if name == "constraints.yaml" and not isinstance(data, (dict, list)):
+                        raise ValueError("constraints.yaml must contain a mapping or list")
                 except ValueError as e:
                     yaml_errors.append(str(e))
         return yaml_errors

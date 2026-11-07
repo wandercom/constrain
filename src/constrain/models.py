@@ -264,6 +264,17 @@ class ProblemModel(BaseModel):
         "Rejected boundary entry") so the interview can ask for it again.
         """
         fields = type(self).model_fields
+        # Explicit retractions, applied before additions so replacements are possible.
+        removals_by_field = update.get("remove", {})
+        if not isinstance(removals_by_field, dict):
+            removals_by_field = {}
+        for key, removals in removals_by_field.items():
+            if key not in fields or not isinstance(removals, list):
+                continue
+            current = getattr(self, key)
+            if isinstance(current, list):
+                setattr(self, key, [item for item in current if
+                    (item.id if key == "boundary_register" else item) not in removals])
         for key, value in update.items():
             if key not in fields:
                 continue
@@ -342,6 +353,8 @@ class Session(BaseModel):
     component_map_yaml: str = ""
     schema_hints_yaml: str = ""
     boundary_register_yaml: str = ""
+    synthesis_attempts: list[dict] = Field(default_factory=list)
+    synthesis_error: str = ""
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     updated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 

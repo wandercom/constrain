@@ -226,3 +226,21 @@ claude mcp add --scope user --transport stdio constrain -- constrain-mcp
 ## License
 
 [MIT](LICENSE)
+
+### Recovering incomplete synthesis
+
+A missing or empty required artifact, exhausted token-limited continuation, or
+failed YAML repair leaves the session resumable and exits unsuccessfully. Existing
+published artifacts are not replaced. Run `constrain resume` to try again. Raw
+responses, provider stop reasons and output-token counts (when supplied by the
+provider) are retained in `.constrain/sessions/<id>.json`. Synthesis makes at most
+two continuation requests after token-limited output; it does not retry indefinitely.
+
+Set `CONSTRAIN_PROJECT` to explicitly choose the Kindex project topic. Otherwise
+Constrain uses the nearest `.kin/config` name or repository root; a standalone
+`constrain/` run directory uses its parent project name.
+
+Interview model updates can retract superseded items using
+`"remove": {"assumptions": ["old assumption"], "boundary_register": ["obsolete-id"]}`.
+Retractions are applied before additions. Boundary removals use IDs; other list
+fields use exact existing values. Record the reason in the model's history.

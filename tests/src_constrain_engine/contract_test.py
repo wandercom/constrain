@@ -58,7 +58,10 @@ class MockSession:
     component_map_yaml: Optional[str] = None
     schema_hints_yaml: Optional[str] = None
 
+    synthesis_error: str = ""
+
     def __post_init__(self):
+        self.synthesis_attempts = []
         if self.conversation is None:
             self.conversation = []
         if self.problem_model is None:
@@ -450,22 +453,19 @@ def test_run_synthesis_with_revision(mock_session, mock_session_mgr, mock_io, mo
 
 
 def test_run_synthesis_parse_error(mock_session, mock_session_mgr, mock_io, mock_client, mock_config):
-    """_run_synthesis handles ValueError when parse fails (does not re-raise)"""
+    """Parse failure preserves evidence without completing the session."""
     from constrain.engine import ConversationEngine
     from constrain.models import Phase
 
     mock_session.phase = Phase.synthesize
     engine = ConversationEngine(mock_session, mock_session_mgr, mock_client, mock_io, mock_config)
-
     with patch.object(engine, '_call_api', return_value="Invalid response"):
-        with patch('constrain.engine.parse_synthesis_output', side_effect=ValueError("Parse failed")):
-            # The engine catches ValueError, stores raw output, and completes
+        with pytest.raises(RuntimeError):
             engine._run_synthesis()
-
-            # Should store raw output as prompt_md and empty constraints_yaml
-            assert mock_session.prompt_md == "Invalid response"
-            assert mock_session.constraints_yaml == ""
-            mock_session_mgr.save.assert_called()
+    assert mock_session.phase is Phase.synthesize
+    assert mock_session.prompt_md is None
+    assert mock_session.synthesis_attempts[-1]['text'] == "Invalid response"
+    mock_session_mgr.save.assert_called()
 
 
 def test_run_synthesis_eof_error(mock_session, mock_session_mgr, mock_io, mock_client, mock_config):
