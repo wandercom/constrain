@@ -57,6 +57,7 @@ class LocalAgentBackend:
             result = subprocess.run(
                 cmd,
                 cwd=self.cwd,
+                stdin=subprocess.DEVNULL,
                 text=True,
                 capture_output=True,
                 check=False,
