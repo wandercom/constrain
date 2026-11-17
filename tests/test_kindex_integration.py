@@ -1,5 +1,7 @@
 """Tests for optional kindex integration — graceful degradation."""
 
+import subprocess
+
 import pytest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
@@ -75,6 +77,16 @@ class TestAvailability:
         with patch.object(ki, "_cli_available", return_value=False):
             with patch.object(ki, "is_available", return_value=False):
                 assert ki.index_codebase(Path(".")) is False
+
+    def test_index_codebase_cli_does_not_inherit_stdin(self, tmp_path):
+        """kin ingest must get /dev/null stdin so it cannot block on an inherited pipe."""
+        from constrain import kindex_integration as ki
+        with patch.object(ki, "_cli_available", return_value=True), \
+                patch.object(ki.subprocess, "run",
+                             return_value=MagicMock(returncode=0)) as run:
+            assert ki.index_codebase(tmp_path) is True
+        run.assert_called_once()
+        assert run.call_args.kwargs["stdin"] is subprocess.DEVNULL
 
     def test_close_is_safe_when_not_initialized(self):
         from constrain import kindex_integration as ki

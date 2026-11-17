@@ -1,3 +1,5 @@
+import os
+import subprocess
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
@@ -156,3 +158,26 @@ def test_openai_backend_forwards_opt_in_reasoning_effort(monkeypatch):
         max_tokens=4096,
         reasoning_effort="none",
     )
+
+
+def test_local_agent_backend_does_not_inherit_open_stdin(monkeypatch):
+    """A child that reads stdin to EOF must not hang when our stdin is an open pipe."""
+    real_run = subprocess.run
+    monkeypatch.setattr(
+        "constrain.backends.local_agent.subprocess.run",
+        lambda *a, **k: real_run(*a, **{"timeout": 10, **k}),
+    )
+    read_fd, write_fd = os.pipe()  # write end stays open, so a read never sees EOF
+    saved_fd = os.dup(0)
+    try:
+        os.dup2(read_fd, 0)
+        backend = LocalAgentBackend(
+            name="testagent",
+            command="python3",
+            args_template=["-c", "import sys; sys.stdin.read(); print('done')"],
+        )
+        assert backend.complete("system", [{"role": "user", "content": "hi"}]) == "done"
+    finally:
+        os.dup2(saved_fd, 0)
+        for fd in (saved_fd, read_fd, write_fd):
+            os.close(fd)

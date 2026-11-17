@@ -253,6 +253,7 @@ def index_codebase(directory: Path) -> bool:
         try:
             result = subprocess.run(
                 ["kin", "ingest", "code", "--directory", str(directory)],
+                stdin=subprocess.DEVNULL,
                 capture_output=True,
                 text=True,
                 timeout=120,
